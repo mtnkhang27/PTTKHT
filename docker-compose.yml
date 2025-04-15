@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: pttkht2025
       POSTGRES_DB: project
     ports:
-      - "0704:5432"
+      - "3457:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
