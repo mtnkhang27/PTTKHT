@@ -73,13 +73,17 @@ function Certificate() {
     }
   };
 
+  const isOrganizationalClient = (certificate) => {
+    return certificate?.iddonvi !== null && certificate?.iddonvi !== undefined;
+  };
+
   return (
     <div className="certificate-container">
       <h1 className="certificate-title">Cấp Chứng Chỉ</h1>
 
       <div className="certificate-input-area">
         <input
-          placeholder="Nhập mã kỳ thi để kiểm tra"
+          placeholder="Nhập số báo danh để kiểm tra"
           value={examId}
           onChange={(e) => setExamId(e.target.value)}
           className="certificate-input"
@@ -92,13 +96,24 @@ function Certificate() {
       {certificateInfo && (
         <div className="certificate-info">
           <h2 className="certificate-info-title">Thông tin chi tiết</h2>
-          <p>Mã kỳ thi: {certificateInfo.sobaodanh}</p>
+          <p>Số báo danh: {certificateInfo.sobaodanh}</p>
+          <p>Mã phiếu đăng ký: {certificateInfo.idphieudangky}</p>
+          <p>Mã lịch thi: {certificateInfo.idlichthi}</p>
+          <p>ID Đơn vị: {certificateInfo.iddonvi || 'Không có'}</p>
           <p>Kết quả: {certificateInfo.ketQuaThi}</p>
-          <p>Ngày nhận dự kiến: {certificateInfo.thoiGianNhanChungChi ? new Date(certificateInfo.thoiGianNhanChungChi).toLocaleDateString() : 'Chưa có'}</p>
-          <p>Trạng thái thanh toán: {certificateInfo.trangThaiThanhToan || 'Chưa rõ'}</p>
+          <p>Điểm số: {certificateInfo.diemSoThi}</p>
+          <p>Ngày nhận dự kiến: {certificateInfo.thoigiannhanchungchi ? new Date(certificateInfo.thoigiannhanchungchi).toLocaleDateString() : 'Chưa có'}</p>
           <p>Đã nhận: {certificateInfo.xacnhannhanchungchi ? 'Rồi' : 'Chưa'}</p>
-          <p>Hình thức nhận: Tại trung tâm</p>
-          {!certificateInfo.xacnhannhanchungchi && (
+          <p>
+            Hình thức nhận:{' '}
+            {isOrganizationalClient(certificateInfo)
+              ? 'Chuyển bưu điện'
+              : 'Tại trung tâm'}
+          </p>
+          {isOrganizationalClient(certificateInfo) && certificateInfo.diaChiDonVi && (
+            <p>Địa chỉ nhận: {certificateInfo.diaChiDonVi}</p>
+          )}
+          {!isOrganizationalClient(certificateInfo) && !certificateInfo.xacnhannhanchungchi && (
             <button onClick={() => handleReceiveCertificate(certificateInfo.sobaodanh)} className="certificate-receive-button">
               Xác nhận đã nhận
             </button>
@@ -111,14 +126,16 @@ function Certificate() {
         <table className="certificate-table">
           <thead>
             <tr>
-              <th>Mã kỳ thi</th>
+              <th>Số báo danh</th>
               <th>Mã phiếu đăng ký</th>
               <th>Mã lịch thi</th>
+              <th>ID Đơn vị</th>
               <th>Kết quả</th>
               <th>Điểm số</th>
               <th>Ngày nhận dự kiến</th>
               <th>Đã nhận</th>
-              <th>Hành động</th> {/* New column for the button */}
+              <th>Hình thức nhận</th>
+              <th>Hành động</th>
             </tr>
           </thead>
           <tbody>
@@ -127,15 +144,21 @@ function Certificate() {
                 <td>{cert.sobaodanh}</td>
                 <td>{cert.idphieudangky}</td>
                 <td>{cert.idlichthi}</td>
+                <td>{cert.iddonvi || 'Không có'}</td>
                 <td>{cert.ketQuaThi}</td>
                 <td>{cert.diemSoThi}</td>
-                <td>{cert.thoiGianNhanChungChi ? new Date(cert.thoiGianNhanChungChi).toLocaleDateString() : 'Chưa có'}</td>
+                <td>{cert.thoigiannhanchungchi ? new Date(cert.thoigiannhanchungchi).toLocaleDateString() : 'Chưa có'}</td>
                 <td>{cert.xacnhannhanchungchi ? 'Rồi' : 'Chưa'}</td>
                 <td>
-                  {!cert.xacnhannhanchungchi && (
+                  {isOrganizationalClient(cert)
+                    ? 'Chuyển bưu điện'
+                    : 'Tại trung tâm'}
+                </td>
+                <td>
+                  {!isOrganizationalClient(cert) && !cert.xacnhannhanchungchi && (
                     <button
                       onClick={() => handleReceiveCertificate(cert.sobaodanh)}
-                      className="certificate-receive-button small-button" // Optional: Add a small-button class for styling
+                      className="certificate-receive-button small-button"
                     >
                       Xác nhận
                     </button>

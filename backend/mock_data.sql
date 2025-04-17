@@ -83,6 +83,26 @@ INSERT INTO phieuduthi (sobaodanh, idphieudangky, idlichthi, iddonvi, nhanviengh
 (803, 503, 603, 401, 104, 'Dat', 85.2, '2025-05-15', true),
 (804, 504, 601, 403, 104, 'Dat', 60.0, NULL, false),
 (805, 505, 605, 402, 104, 'Dat', 90.1, '2025-05-20', true);
+(806, 501, 601, NULL, 104, 'Dat', 72.1, '2025-05-10', true),
+(807, 501, 602, NULL, 104, 'Khong dat', 48.8, NULL, false),
+(808, 502, 602, 402, 104, 'Dat', 88.9, '2025-05-12', true),
+(809, 502, 603, 402, 104, 'Dat', 65.5, '2025-05-15', false),
+(810, 503, 603, NULL, 104, 'Dat', 91.2, '2025-05-18', true),
+(811, 503, 604, NULL, 104, 'Khong dat', 39.7, NULL, false),
+(812, 504, 601, 403, 104, 'Dat', 79.9, '2025-05-20', true),
+(813, 504, 602, 403, 104, 'Dat', 68.0, '2025-05-22', false),
+(814, 505, 605, 402, 104, 'Dat', 82.3, '2025-05-25', true),
+(815, 501, 601, NULL, 104, 'Dat', 75.6, '2025-05-28', false),
+(816, 502, 602, 401, 104, 'Khong dat', 52.4, NULL, false),
+(817, 503, 603, NULL, 104, 'Dat', 89.1, '2025-05-30', true),
+(818, 504, 604, 403, 104, 'Dat', 61.7, '2025-06-02', false),
+(819, 505, 605, 401, 104, 'Dat', 93.5, '2025-06-05', true),
+(820, 501, 602, NULL, 104, 'Dat', 70.3, '2025-06-08', false),
+(821, 502, 603, 402, 104, 'Khong dat', 41.9, NULL, false),
+(822, 503, 604, NULL, 104, 'Dat', 86.8, '2025-06-10', true),
+(823, 504, 605, 403, 104, 'Dat', 66.2, '2025-06-12', false),
+(824, 505, 601, 401, 104, 'Dat', 95.0, '2025-06-15', true),
+(825, 503, 602, NULL, 104, 'Khong dat', 55.5, NULL, false);
 
 -- Mock data for HoaDon
 INSERT INTO hoadon (idhoadon, idphieudangky, ngaythanhtoan, tongtien, nhanvienlaphoadon, trangthai) VALUES

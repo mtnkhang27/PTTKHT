@@ -6,20 +6,26 @@ import ExtendTest from './components/ExtendTest';
 import Certificate from './components/Certificate';
 import Home from './components/Home';
 import Layout from './components/Layout';
-import './App.css'; // Import the main CSS file
+import Login from './components/Login';
+import './App.css';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute'; 
 
 function App() {
   return (
     <Router>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/extend-test" element={<ExtendTest />} />
-          <Route path="/certificate" element={<Certificate />} />
-        </Routes>
-      </Layout>
+      <AuthProvider>
+        <Layout>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />
+            <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+            <Route path="/extend-test" element={<ProtectedRoute><ExtendTest /></ProtectedRoute>} />
+            <Route path="/certificate" element={<ProtectedRoute><Certificate /></ProtectedRoute>} />
+          </Routes>
+        </Layout>
+      </AuthProvider>
     </Router>
   );
 }
