@@ -1,96 +1,195 @@
-/* styles/Register.css */
+/* styles/styles.css */
+/* General styles for the whole application can go here */
+
+/* Styles for the Register component */
 .register-container {
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-  }
-  
-  .register-title {
-    font-size: 1.5em;
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .register-type-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .register-type-buttons button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: #f0f0f0;
-    color: #333;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  .register-type-buttons button.active {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .register-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .form-section {
-    margin-bottom: 15px;
-  }
-  
-  .form-section-title {
-    font-size: 1.2em;
-    color: #555;
-    margin-bottom: 10px;
-  }
-  
-  .form-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .form-submit-button {
-    background-color: #007bff;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-  }
-  
-  .form-submit-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .registration-details {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-  }
-  
-  .details-title {
-    font-size: 1.1em;
-    color: #444;
-    margin-bottom: 10px;
-  }
-  
-  .details-text {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    font-family: monospace;
-    font-size: 0.9em;
-    color: #333;
-  }
+  padding: 30px;
+  background-color: #f8f9fa; /* Light grey background */
+  border-radius: 12px; /* More rounded corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Softer shadow */
+  margin: 30px auto; /* Center the container with more top/bottom margin */
+  max-width: 700px; /* Limit the maximum width */
+}
+
+.register-title {
+  font-size: 2em; /* Larger title */
+  color: #2c3e50; /* Darker text color */
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 600; /* Semi-bold font weight */
+}
+
+.register-type-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.register-type-buttons button {
+  padding: 12px 20px;
+  border: 1px solid #ced4da; /* Light grey border */
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #e9ecef; /* Lighter background */
+  color: #495057; /* Slightly darker text */
+  font-size: 1em;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.register-type-buttons button:hover {
+  background-color: #d3d9df; /* Slightly darker hover background */
+  border-color: #adb5bd;
+}
+
+.register-type-buttons button.active {
+  background-color: #007bff; /* Primary blue color */
+  color: white;
+  border-color: #007bff;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.form-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #dee2e6; /* Light border for sections */
+  border-radius: 8px;
+  background-color: #f8f9fa;
+}
+
+.form-section-title {
+  font-size: 1.3em;
+  color: #343a40; /* Darker section title */
+  margin-bottom: 15px;
+  border-bottom: 2px solid #007bff; /* Highlight border */
+  padding-bottom: 8px;
+}
+
+.form-input,
+.form-select {
+  width: calc(100% - 22px); /* Adjust for padding and border */
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 1em;
+  color: #495057;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-submit-button {
+  background-color: #28a745; /* Success green color */
+  color: white;
+  padding: 14px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1em;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+}
+
+.form-submit-button:hover {
+  background-color: #1e7e34; /* Darker green on hover */
+}
+
+.schedule-selection {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  padding: 15px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+}
+
+.schedule-selection h2 {
+  font-size: 1.3em;
+  color: #343a40;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 8px;
+}
+
+.grid-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Responsive grid */
+  gap: 10px;
+}
+
+.schedule-item {
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.schedule-item span {
+  font-size: 0.95em;
+  color: #495057;
+}
+
+.schedule-item button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.9em;
+  transition: background-color 0.3s ease;
+}
+
+.schedule-item button:hover {
+  background-color: #0056b3;
+}
+
+.registration-details {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #e9ecef;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+}
+
+.details-title {
+  font-size: 1.2em;
+  color: #343a40;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.details-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9em;
+  color: #212529;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+}

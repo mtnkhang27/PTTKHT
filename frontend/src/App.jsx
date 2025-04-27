@@ -10,6 +10,7 @@ import Login from './components/Login';
 import './App.css';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute'; 
+import Customer from './components/Customer';
 
 function App() {
   return (
@@ -19,7 +20,9 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-            <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} />
+            {/* <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} /> */}
+            <Route path="/add-customer" element={<Customer />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
             <Route path="/extend-test" element={<ProtectedRoute><ExtendTest /></ProtectedRoute>} />
             <Route path="/certificate" element={<ProtectedRoute><Certificate /></ProtectedRoute>} />
