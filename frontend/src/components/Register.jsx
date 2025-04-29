@@ -24,6 +24,9 @@ function Register() {
   const [selectedSchedules, setSelectedSchedules] = useState([]);
   const [registrationDetails, setRegistrationDetails] = useState(null);
   const [submissionStatus, setSubmissionStatus] = useState(null);
+  const [selectedScheduleDetail, setSelectedScheduleDetail] = useState(null);
+
+
 
   useEffect(() => {
     hienThiLichThiHienCo();
@@ -42,33 +45,73 @@ function Register() {
 
   const hienThiLichThiHienCo = () => {
     const mockSchedules = [
-      { id: 1, name: 'Lịch 1 - Sáng thứ 7' },
-      { id: 2, name: 'Lịch 2 - Chiều chủ nhật' },
-      { id: 3, name: 'Lịch 3 - Tối thứ 3' },
+      {
+        IDLichThi: 1,
+        NgayThi: '2025-05-15',
+        GioThi: '08:00',
+        DiaDiem: 'Hội trường A',
+        IDPhong: 101,
+        NhanVienCoiThi: 1001,
+        ChungChiThi: 'TOEIC'
+      },
+      {
+        IDLichThi: 2,
+        NgayThi: '2025-05-16',
+        GioThi: '13:00',
+        DiaDiem: 'Hội trường B',
+        IDPhong: 102,
+        NhanVienCoiThi: 1002,
+        ChungChiThi: 'IELTS'
+      },
+      {
+        IDLichThi: 3,
+        NgayThi: '2025-05-17',
+        GioThi: '19:00',
+        DiaDiem: 'Hội trường C',
+        IDPhong: 103,
+        NhanVienCoiThi: 1003,
+        ChungChiThi: 'VSTEP'
+      }
     ];
+    
     setAvailableSchedules(mockSchedules);
   };
 
   const hienThiLichThiDaChon = () => {
-    return selectedSchedules.map(schedule => (
-      <div key={schedule.id} className="schedule-item">
-        <span>{schedule.name}</span>
-        <button onClick={() => handleRemoveSelectedSchedule(schedule.id)}>Xóa</button>
-      </div>
-    ));
-  };
+    if (selectedSchedules.length === 0) return null;
+  
 
-  const btn_AddLichThi_Click = (schedule) => {
-    if (!selectedSchedules.some(s => s.id === schedule.id)) {
+    return (
+      selectedSchedules.map(schedule =>
+        <div key={schedule.IDLichThi} className="schedule-item-selection">
+          <div><strong>Lịch thi {schedule.IDLichThi}</strong></div>
+          <div>Ngày thi: {schedule.NgayThi}</div>
+          <div>Giờ thi: {schedule.GioThi}</div>
+          <div>Địa điểm: {schedule.DiaDiem}</div>
+          <div>ID Phòng: {schedule.IDPhong}</div>
+          <div>Nhân viên coi thi: {schedule.NhanVienCoiThi}</div>
+          <div>Chứng chỉ thi: {schedule.ChungChiThi}</div>
+          <button onClick={() => handleRemoveSelectedSchedule(schedule.IDLichThi)}>Xóa</button>
+        </div>
+      )
+    );
+  };
+  
+
+  const handleAddSelectedSchedule = (schedule) => {
+    if (!selectedSchedules.some(s => s.IDLichThi === schedule.IDLichThi)) {
       setSelectedSchedules([...selectedSchedules, schedule]);
     }
   };
-
+  
   const handleRemoveSelectedSchedule = (scheduleId) => {
-    setSelectedSchedules(selectedSchedules.filter(s => s.id !== scheduleId));
+    setSelectedSchedules(selectedSchedules.filter(s => s.IDLichThi !== scheduleId));
   };
+  
+  
+  
 
-  const btn_ThêmPhiếuĐăngKý_Click = async () => {
+  const btn_InsertNewRegistration_Click = async () => {
     const registrationData = {
       registerType,
       registrantName: registerType === 'individual' ? individualInfo.registrantName : unitInfo.unitName,
@@ -117,9 +160,9 @@ function Register() {
     setCertificateOption(e.target.value);
   };
 
-  const toggleRegisterType = () => {
-    setRegisterType(prevType => (prevType === 'individual' ? 'unit' : 'individual'));
-  };
+  // const toggleRegisterType = () => {
+  //   setRegisterType(prevType => (prevType === 'individual' ? 'unit' : 'individual'));
+  // };
 
   return (
     <div className="register-container">
@@ -205,11 +248,70 @@ function Register() {
         <h2>Lịch thi hiện có</h2>
         <div className="grid-view">
           {availableSchedules.map(schedule => (
-            <div key={schedule.id} className="schedule-item">
-              <span>{schedule.name}</span>
-              <button onClick={() => btn_AddLichThi_Click(schedule)}>Thêm</button>
+            <div
+              key={schedule.IDLichThi}
+              className="schedule-item"
+              onClick={() => setSelectedScheduleDetail(schedule)}
+              style={{
+                border: '1px solid #ccc',
+                borderRadius: '10px',
+                padding: '10px',
+                marginBottom: '16px',
+                backgroundColor: '#f9f9f9',
+                cursor: 'pointer',
+                position: 'relative',
+                minHeight: '120px',
+                minWidth: '200px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                paddingBottom: '50px', // extra space for button
+                boxSizing: 'border-box',
+              }}
+            >
+              <div style={{ fontSize: '16px', marginBottom: '8px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }}>
+                <strong>Lịch thi {schedule.IDLichThi}</strong><br />
+                Ngày thi: {schedule.NgayThi}
+              </div>
+                        
+              <button
+                onClick={(e) => {
+                  e.stopPropagation(); // prevent triggering popup
+                  handleAddSelectedSchedule(schedule);
+                }}
+                style={{
+                  position: 'absolute',
+                  bottom: '10px',
+                  right: '10px',
+                  padding: '6px 14px',
+                  border: 'none',
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                }}
+              >
+                Thêm
+              </button>
             </div>
           ))}
+
+
+        {selectedScheduleDetail && (
+          <div className="modal-overlay" onClick={() => setSelectedScheduleDetail(null)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <h2>Chi tiết lịch thi</h2>
+              <p><strong>Ngày thi:</strong> {selectedScheduleDetail.NgayThi}</p>
+              <p><strong>Giờ thi:</strong> {selectedScheduleDetail.GioThi}</p>
+              <p><strong>Địa điểm:</strong> {selectedScheduleDetail.DiaDiem}</p>
+              <p><strong>Phòng:</strong> {selectedScheduleDetail.IDPhong}</p>
+              <p><strong>Nhân viên coi thi:</strong> {selectedScheduleDetail.NhanVienCoiThi}</p>
+              <p><strong>Chứng chỉ:</strong> {selectedScheduleDetail.ChungChiThi}</p>
+
+              <button onClick={() => setSelectedScheduleDetail(null)}>Đóng</button>
+            </div>
+          </div>
+        )}
         </div>
       </div>
 
@@ -222,7 +324,7 @@ function Register() {
       </div>
 
       {/* btnThêmPhiếuĐăngKý: button */}
-      <button onClick={btn_ThêmPhiếuĐăngKý_Click} className="form-submit-button">
+      <button onClick={btn_InsertNewRegistration_Click} className="form-submit-button">
         Thêm phiếu đăng ký
       </button>
 
@@ -239,6 +341,8 @@ function Register() {
       {submissionStatus === 'error' && <p className="error-message">Đăng ký thất bại. Vui lòng thử lại.</p>}
     </div>
   );
+
+  
 }
 
 export default Register;
