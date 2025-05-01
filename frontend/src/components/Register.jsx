@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'; // Assuming you're using react-r
 import * as XLSX from 'xlsx';
 
 function Register() {
+  const apiUrl = import.meta.env.VITE_API_URL
   const navigate = useNavigate(); // Assuming you're using react-router-dom for navigation
   const [registerType, setRegisterType] = useState('individual');
 
@@ -24,7 +25,9 @@ function Register() {
 
   const [showCustomerButton, setShowCustomerButton] = useState(false);
 
+  const [certificates, setCertificates] = useState([]);
   const [certificateOption, setCertificateOption] = useState('');
+
   const [availableSchedules, setAvailableSchedules] = useState([]);
   const [selectedSchedules, setSelectedSchedules] = useState([]);
   const [registrationDetails, setRegistrationDetails] = useState(null);
@@ -34,8 +37,18 @@ function Register() {
 
 
   useEffect(() => {
+    fetchCertificates();
     hienThiLichThiHienCo();
   }, []);
+
+  const fetchCertificates = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/api/register/get-certificates`);
+      setCertificates(response.data);
+    } catch (error) {
+      console.error('Failed to fetch certificates:', error);
+    }
+  };
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -73,17 +86,20 @@ function Register() {
     }
   };
   
-
   const hienThiChungChi = () => {
     return (
       <>
         <option value="">-- Chọn chứng chỉ --</option>
-        <option value="toeic">TOEIC</option>
-        <option value="ielts">IELTS</option>
-        <option value="vstep">VSTEP</option>
+        {Array.isArray(certificates) &&
+          certificates.map((cert) => (
+            <option key={cert.idchungchi} value={cert.idchungchi}>
+              {cert.tenchungchi}
+            </option>
+          ))}
       </>
     );
   };
+  
 
   const mockSchedules = [
     {
@@ -214,17 +230,28 @@ function Register() {
   const handleCertificateOptionChange = (e) => {
     const selected = e.target.value;
     setCertificateOption(selected);
-
+  
     if (selected === '') {
       setAvailableSchedules([]);
     } else {
-      const filtered = mockSchedules.filter(
-        s => s.ChungChiThi.toLowerCase() === selected.toLowerCase()
+      const selectedCert = certificates.find(
+        (cert) => String(cert.idchungchi) === selected
       );
+  
+      if (!selectedCert) {
+        setAvailableSchedules([]);
+        return;
+      }
+  
+      const filtered = mockSchedules.filter(
+        (s) => s.ChungChiThi.toLowerCase() === selectedCert.tenchungchi.toLowerCase()
+      );
+  
       setAvailableSchedules(filtered);
     }
   };
-
+  
+  
   // const toggleRegisterType = () => {
   //   setRegisterType(prevType => (prevType === 'individual' ? 'unit' : 'individual'));
   // };

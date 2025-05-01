@@ -39,18 +39,19 @@ INSERT INTO donvichamthi (iddonvi, tendonvi) VALUES
 -- Mock data for PhieuDangKy
 INSERT INTO phieudangky (idphieudangky, idkhachhang, nhanvientiepnhan, ngaydangky, trangthai) VALUES
 (501, 1, 101, '2025-03-15', 'Da tiep nhan'),
-(502, 2, 101, '2025-03-20', 'Da tiep nhan'),
+(502, 2, 101, '2025-05-01', 'Da tiep nhan'),
 (503, 3, 101, '2025-03-25', 'Da tiep nhan'),
 (504, 4, 101, '2025-04-01', 'Da tiep nhan'),
 (505, 5, 101, '2025-04-05', 'Da tiep nhan');
 
+
 -- Mock data for LichThi
 INSERT INTO lichthi (idlichthi, ngaythi, giothi, diadiem, idphong, nhanviencoithi, chungchithi) VALUES
-(601, '2025-04-20', '08:00:00', 'Phong 301, 123 Le Loi', 301, 103, 201, 100),
-(602, '2025-04-20', '14:00:00', 'Phong 302, 123 Le Loi', 302, 103, 202, 100),
-(603, '2025-04-25', '09:00:00', 'Phong 303, 456 Nguyen Trai', 303, 103, 203, 100),
-(604, '2025-04-25', '15:00:00', 'Phong 304, 456 Nguyen Trai', 304, 103, 204, 100),
-(605, '2025-04-27', '10:00:00', 'Phong 305, 789 Hai Ba Trung', 305, 103, 205, 100);
+(601, '2025-04-20', '08:00:00', 'Phong 301, 123 Le Loi', 301, 103, 201),
+(602, '2025-04-20', '14:00:00', 'Phong 302, 123 Le Loi', 302, 103, 202),
+(603, '2025-04-25', '09:00:00', 'Phong 303, 456 Nguyen Trai', 303, 103, 203),
+(604, '2025-04-25', '15:00:00', 'Phong 304, 456 Nguyen Trai', 304, 103, 204),
+(605, '2025-04-27', '10:00:00', 'Phong 305, 789 Hai Ba Trung', 305, 103, 205);
 
 
 -- Mock data for PhieuGiaHan
