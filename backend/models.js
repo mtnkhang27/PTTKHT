@@ -48,7 +48,7 @@ const PhieuGiaHan = sequelize.define('phieugiahan', {
   ]
 });
 
-const PhieuDangKyDonVi = sequelize.define('phieudangky_donvi', {
+const PhieuDangKyDonVi = sequelize.define('phieudangkydonvi', {
   idphieudangky: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -65,7 +65,7 @@ const PhieuDangKyDonVi = sequelize.define('phieudangky_donvi', {
     type: DataTypes.DECIMAL(5, 2)
   }
 }, {
-  tableName: 'phieudangky_donvi',
+  tableName: 'phieudangkydonvi',
   timestamps: false
 });
 
@@ -243,7 +243,8 @@ const HoaDon = sequelize.define('hoadon', {
   idhoadon: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    autoIncrement: true // Đảm bảo idhoadon tự động tăng
   },
   idphieudangky: {
     type: DataTypes.INTEGER,
@@ -266,6 +267,9 @@ const HoaDon = sequelize.define('hoadon', {
     }
   },
   trangthai: {
+    type: DataTypes.STRING(255)
+  },
+  loaithanhtoan: {
     type: DataTypes.STRING(255)
   }
 }, {
@@ -367,6 +371,22 @@ const DonViChamThi = sequelize.define('donvichamthi', {
   tableName: 'donvichamthi',
   timestamps: false
 });
+
+// Một phiếu đăng ký có thể là của đơn vị
+PhieuDangKy.hasOne(PhieuDangKyDonVi, {
+  foreignKey: 'idphieudangky',
+  as: 'donvi' // alias này sẽ dùng trong include
+});
+
+// Đơn vị đăng ký thuộc về một phiếu
+PhieuDangKyDonVi.belongsTo(PhieuDangKy, {
+  foreignKey: 'idphieudangky'
+});
+// PhieuDangKy
+PhieuDangKy.hasMany(ChungChiDangKy, { foreignKey: 'idphieudangky', as: 'chungchidangkys' });
+
+// ChungChiDangKy
+ChungChiDangKy.belongsTo(ChungChi, { foreignKey: 'idchungchi', as: 'chungchi' });
 
 
 module.exports = {

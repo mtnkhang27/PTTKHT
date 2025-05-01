@@ -3,7 +3,7 @@ const sequelize = require('./database');
 const { PhieuDuThi } = require('./models'); // Import your Sequelize models
 const { ChungChi } = require('./models');
 const cors = require('cors');
-
+const paymentRoutes = require('./payment/paymentRoutes');
 
 const app = express();
 const port = 3458;
@@ -74,6 +74,8 @@ app.put('/api/certificates/:sobaodanh/confirm', async (req, res) => {
     res.status(500).json({ error: 'Failed to update certificate confirmation' });
   }
 });
+
+app.use('/api/payment', paymentRoutes);
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);
