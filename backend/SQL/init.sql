@@ -55,6 +55,8 @@ CREATE TABLE IF NOT EXISTS LichThi (
   IDPhong INT NULL,
   NhanVienCoiThi INT NULL,
   ChungChiThi INT NULL
+  SoLuongThiSinh INT NULL,
+  SoLuongThiSinhHienTai INT NULL,
 );
 
 -- Table: PhieuGiaHan
