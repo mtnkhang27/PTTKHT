@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import '../styles/Customer.css'; 
 
 
 function Customer() {
@@ -8,11 +10,14 @@ function Customer() {
   const [sdt, setSdt] = useState('');                 // SĐT (Số Điện Thoại)
   const [diaChi, setDiaChi] = useState('');           // ĐịaChỉ
 
+  const location = useLocation(); // Get the current location object
+  const registerType = location.state?.registerType || 'unknown'; // Fallback
+
   // --- Event Handlers ---
 
 
   const handleAddCustomerClick = (event) => {
-    // Prevent default form submission behavior (page reload)
+   
     event.preventDefault();
 
     // Gather the data from the state
@@ -21,6 +26,7 @@ function Customer() {
       email: email,
       phone: sdt,
       address: diaChi,
+      registerType: registerType, 
     };
 
     console.log('Submitting Customer Data:', customerData);
@@ -32,11 +38,18 @@ function Customer() {
   // Renders the form with input fields and the button
 
   return (
-    <div style={{ border: '1px solid #ccc', padding: '20px', margin: '20px', maxWidth: '400px' }}>
+    // Add the className here
+    <div className="customer-form-container">
       <h2>Thêm Khách Hàng Mới</h2>
-      {/* Use a form element for semantic structure and accessibility */}
+     
+      <div style={{ textAlign: 'center' }}>
+        <label className="register-type-label">
+          {registerType === 'individual' ? 'Cá nhân' : 'Đơn vị'}
+        </label>
+      </div>
+
       <form onSubmit={handleAddCustomerClick}>
-        {/* Tên Khách Hàng Input */}
+       
         <div style={{ marginBottom: '10px' }}>
           <label htmlFor="tenKhachHang" style={{ display: 'block', marginBottom: '5px' }}>
             Tên Khách Hàng:
@@ -44,58 +57,54 @@ function Customer() {
           <input
             type="text"
             id="tenKhachHang"
-            value={tenKhachHang}
-            onChange={(e) => setTenKhachHang(e.target.value)} // Update state on change
-            required // Example: Make field required
+            value={tenKhachHang} // State variable for customer name
+            onChange={(e) => setTenKhachHang(e.target.value)}
+            required
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
         </div>
 
-        {/* Email Input */}
         <div style={{ marginBottom: '10px' }}>
           <label htmlFor="email" style={{ display: 'block', marginBottom: '5px' }}>
             Email:
           </label>
           <input
-            type="email" // Use type="email" for basic email validation
+            type="email"
             id="email"
-            value={email}
+            value={email} // State variable for email
             onChange={(e) => setEmail(e.target.value)}
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
         </div>
 
-        {/* SĐT (Phone Number) Input */}
         <div style={{ marginBottom: '10px' }}>
           <label htmlFor="sdt" style={{ display: 'block', marginBottom: '5px' }}>
             Số Điện Thoại (SĐT):
           </label>
           <input
-            type="tel" // Use type="tel" for phone numbers
+            type="tel"
             id="sdt"
-            value={sdt}
+            value={sdt} // State variable for phone number
             onChange={(e) => setSdt(e.target.value)}
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box' }}
           />
         </div>
 
-        {/* Địa Chỉ Input */}
         <div style={{ marginBottom: '15px' }}>
           <label htmlFor="diaChi" style={{ display: 'block', marginBottom: '5px' }}>
             Địa Chỉ:
           </label>
-          <textarea // Use a textarea for potentially longer address input
+          <textarea
             id="diaChi"
-            value={diaChi}
+            value={diaChi} // State variable for address
             onChange={(e) => setDiaChi(e.target.value)}
             rows="3"
             style={{ width: '100%', padding: '8px', boxSizing: 'border-box', resize: 'vertical' }}
           />
         </div>
 
-        {/* Submit Button (btnThêmKháchHàng) */}
         <button
-          type="submit" // Use type="submit" when inside a <form>
+          type="submit"
           style={{ padding: '10px 15px', cursor: 'pointer' }}
         >
           Thêm Khách Hàng

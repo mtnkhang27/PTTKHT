@@ -165,3 +165,16 @@ ADD CONSTRAINT FK_HoaDon_PhieuDangKy FOREIGN KEY (IDPhieuDangKy) REFERENCES Phie
 
 ALTER TABLE HoaDon
 ADD CONSTRAINT FK_HoaDon_NhanVien FOREIGN KEY (NhanVienLapHoaDon) REFERENCES NhanVien (IDNhanVien);
+
+-- fix db
+--ALTER TABLE LichThi
+--DROP COLUMN SoLuongThiSinh;
+--
+--alter table phieuduthi 
+--add column TenThiSinh VARCHAR(255) NULL;
+--
+--alter table phieuduthi 
+--add column  NgaySinhTS DATE NULL;
+--
+--select * from phieuduthi p 
+
