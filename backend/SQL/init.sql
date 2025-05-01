@@ -105,12 +105,13 @@ CREATE TABLE IF NOT EXISTS PhieuDuThi (
 
 -- Table: HoaDon
 CREATE TABLE IF NOT EXISTS HoaDon (
-  IDHoaDon INT NOT NULL PRIMARY KEY,
+  IDHoaDon SERIAL INT NOT NULL PRIMARY KEY,
   IDPhieuDangKy INT NULL,
   NgayThanhToan DATE NULL,
   TongTien DECIMAL(10, 2) NULL,
   NhanVienLapHoaDon INT NULL,
-  TrangThai VARCHAR(255) NULL
+  TrangThai VARCHAR(255) NULL,
+  LoaiThanhToan VARCHAR(255) NULL
 );
 
 -- Adding Foreign Key Constraints
