@@ -4,6 +4,7 @@ const { PhieuDuThi } = require('./models'); // Import your Sequelize models
 const { ChungChi } = require('./models');
 const cors = require('cors');
 const paymentRoutes = require('./payment/paymentRoutes');
+const path = require('path'); // ✅ Thêm dòng này
 
 const app = express();
 const port = 3458;
@@ -49,6 +50,7 @@ app.get('/api/certificates/:sobaodanh', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch certificate information' });
   }
 });
+app.use('/invoices', express.static(path.join(__dirname, 'invoices')));
 
 // API endpoint to update certificate received confirmation
 app.put('/api/certificates/:sobaodanh/confirm', async (req, res) => {
