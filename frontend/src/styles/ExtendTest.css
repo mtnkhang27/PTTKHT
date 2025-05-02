@@ -1,97 +1,333 @@
 /* styles/ExtendTest.css */
+
+/* General container styling */
 .extend-container {
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+  max-width: 600px; /* Added max-width for better layout on larger screens */
+  margin: 40px auto; /* Center the container and add vertical space */
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  font-family: sans-serif; /* Added a default font */
+}
+
+/* Title styling */
+.extend-title {
+  font-size: 1.8em; /* Slightly larger title */
+  color: #333;
+  margin-bottom: 30px; /* More space below the title */
+  text-align: center;
+}
+
+/* Styles for general sections (Input, Messages, Results) */
+.extend-section {
+  background-color: #f9f9f9; /* Light grey background for sections */
+  padding: 20px;
+  margin-bottom: 20px; /* Space between sections */
+  border-radius: 6px;
+  border: 1px solid #eee; /* Subtle border */
+}
+
+/* Section title styling */
+.section-title {
+  font-size: 1.3em; /* Slightly larger section title */
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 20px; /* Space below section title */
+  border-bottom: 1px solid #eee; /* Separator line */
+  padding-bottom: 10px;
+}
+
+/* Styling for input groups (label + input/textarea) */
+.input-group {
+  margin-bottom: 15px; /* Space between input groups */
+}
+
+.input-group label {
+  display: block; /* Label on its own line */
+  margin-bottom: 8px; /* Space between label and input */
+  font-weight: bold;
+  color: #666;
+  font-size: 0.95em;
+}
+
+/* Styling for standard text inputs */
+.extend-input {
+  width: 100%; /* Full width within the parent container */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  box-sizing: border-box; /* Include padding and border in width */
+}
+
+/* Styling for textarea (reason) */
+.extend-textarea {
+  width: 100%; /* Full width */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  box-sizing: border-box; /* Include padding and border in width */
+  resize: vertical; /* Allow vertical resizing */
+}
+
+/* Focus styles for inputs/textareas */
+.extend-input:focus,
+.extend-textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+/* Disabled styles for inputs/textareas */
+.extend-input:disabled,
+.extend-textarea:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+}
+
+/* Styling for checkbox group */
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px; /* Space below the checkbox */
+}
+
+.checkbox-group input[type="checkbox"] {
+  margin-right: 10px; /* Space between checkbox and label */
+  width: 18px; /* Size adjustment */
+  height: 18px; /* Size adjustment */
+  cursor: pointer;
+}
+.checkbox-group input[type="checkbox"]:disabled {
+   cursor: not-allowed;
+}
+
+.checkbox-group label {
+  margin-bottom: 0; /* Remove bottom margin */
+  font-weight: normal; /* Normal font weight for label */
+  cursor: pointer;
+  color: #666;
+}
+
+
+/* Base button styles */
+.extend-button {
+  display: block; /* Make buttons block elements for full width */
+  width: 100%; /* Full width by default */
+  padding: 12px 20px; /* More padding */
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  font-size: 1.05em; /* Slightly larger font */
+  transition: background-color 0.3s ease, opacity 0.3s ease;
+  text-align: center; /* Center text */
+}
+
+.extend-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+/* Disabled button styles */
+.extend-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7; /* Add opacity for visual feedback */
+}
+
+/* Specific style for the initial check button */
+.check-button {
+  margin-top: 10px; /* Space above the check button */
+}
+
+/* Specific style for the submit button */
+.extend-submit-button {
+  background-color: #28a745; /* Green */
+  margin-top: 20px; /* More space above the submit button */
+}
+
+.extend-submit-button:hover:not(:disabled) {
+  background-color: #218838; /* Darker green */
+}
+
+/* Styles for message area */
+.message-area {
+  padding: 15px; /* Add padding to the message area */
+  background-color: #fff; /* White background for messages */
+  border: 1px solid #ddd; /* Subtle border */
+}
+
+.message-area p {
+  margin-top: 0;
+  margin-bottom: 10px; /* Space between messages if multiple */
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+}
+.message-area p:last-child {
+  margin-bottom: 0; /* No margin for the last message */
+}
+
+
+/* Loading message style */
+.loading-message {
+  background-color: #e9ecef; /* Light grey */
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+/* Error message style */
+.error-message {
+  background-color: #f8d7da; /* Light red */
+  color: #721c24; /* Dark red */
+  border: 1px solid #f5c6cb;
+}
+
+/* Success message style */
+.success-message {
+  background-color: #d4edda; /* Light green */
+  color: #155724; /* Dark green */
+  border: 1px solid #c3e6cb;
+}
+
+/* Styles for the results section (replaces old .extension-info) */
+.results-area {
+  /* Styles are primarily from .extend-section and .section-title */
+}
+
+.check-success-details {
+  margin-bottom: 20px; /* Space before schedule options or confirm button */
+}
+
+.check-success-details p {
+   margin-bottom: 10px; /* Space between detail lines */
+   line-height: 1.5; /* Improve readability */
+}
+
+.check-success-details strong {
+  color: #333;
+}
+
+
+/* Styling for fee notice */
+.extension-fee {
+  color: #dc3545; /* Red */
+  font-weight: bold;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #fff0f3; /* Light red background */
+  border-left: 4px solid #dc3545; /* Colored left border */
+}
+
+/* Styling for new schedule options area */
+.new-schedule-options {
+  margin-top: 20px; /* Space above schedule options */
+  padding-top: 15px;
+  border-top: 1px solid #eee; /* Separator line */
+}
+
+.new-schedule-options h3 {
+  font-size: 1.1em;
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+/* Container for schedule buttons */
+.schedule-list {
+  display: flex;
+  flex-wrap: wrap; /* Allow buttons to wrap */
+  gap: 10px; /* Space between buttons */
+  margin-bottom: 15px;
+}
+
+/* Individual schedule button styles */
+.schedule-button {
+  padding: 10px 15px;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  background-color: #e9f5ff; /* Light blue default background */
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.95em;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  flex-grow: 1; /* Allow buttons to grow and fill space */
+  text-align: center;
+  min-width: 120px; /* Minimum width to prevent squishing */
+}
+
+.schedule-button:hover:not(:disabled) {
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
+}
+
+/* Style for the selected schedule button */
+.schedule-button.selected {
+  background-color: #007bff;
+  color: white;
+  border-color: #0056b3;
+  font-weight: bold;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.4); /* Add a subtle shadow */
+}
+
+/* Disabled schedule button style */
+.schedule-button:disabled {
+  background-color: #e9ecef;
+  color: #666;
+  border-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+
+/* Styling for prompt/info messages */
+.selection-prompt,
+.info-message {
+  font-style: italic;
+  color: #777;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-left: 4px solid #bbb;
+  border-radius: 4px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .extend-container {
+      margin: 20px; /* Reduce margin on smaller screens */
+      padding: 15px;
   }
-  
+
   .extend-title {
-    font-size: 1.5em;
-    color: #333;
-    margin-bottom: 20px;
-    text-align: center;
+      font-size: 1.6em;
   }
-  
-  .extend-input-area {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
+
+  .section-title {
+       font-size: 1.2em;
   }
-  
-  .extend-input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  .extend-button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .extend-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .extension-info {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-  }
-  
-  .extension-info-title {
-    font-size: 1.2em;
-    color: #555;
-    margin-bottom: 10px;
-  }
-  
-  .new-schedule-options {
-    margin-top: 10px;
-  }
-  
-  .schedule-button {
-    padding: 8px 12px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #007bff;
-    border-radius: 5px;
-    background-color: white;
-    color: #007bff;
-    cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  .schedule-button:hover {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .extension-fee {
-    color: #888;
-    margin-top: 10px;
-  }
-  
+
+  .extend-button,
   .extend-submit-button {
-    background-color: #4caf50;
-    color: white;
-    padding: 12px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1em;
-    transition: background-color 0.3s ease;
-    margin-top: 15px;
+      padding: 10px 15px;
+      font-size: 1em;
   }
-  
-  .extend-submit-button:hover {
-    background-color: #45a049;
+
+  .schedule-button {
+       padding: 8px 12px;
+       font-size: 0.9em;
+       min-width: unset; /* Remove min-width on small screens */
+       flex-grow: 1; /* Let them grow to fill space */
   }
+   .schedule-list {
+      gap: 8px; /* Smaller gap */
+  }
+
+}
