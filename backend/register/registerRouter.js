@@ -24,21 +24,13 @@ router.get('/get-certificates', async (req, res) => {
 
 router.get('/get-schedules', async (req, res) => {
     try {
-        // Fetch all schedules from the database
-        const schedules = await LichThi.findAll({
-            include: [
-                {
-                    model: ChungChi,
-                    as: 'chungChi',
-                    attributes: ['tenchungchi'],
-                },
-                {
-                    model: NhanVien,
-                    as: 'nhanVien',
-                    attributes: ['hoten'],
-                },
-            ],
-        });
+        const [schedules] = await sequelize.query(`
+            SELECT lt.*, pt.SoChoTrong, cc.tenchungchi
+            FROM LichThi lt
+            LEFT JOIN PhongThi pt ON lt.IDPhong = pt.IDPhong
+            LEFT JOIN ChungChi cc on lt.chungchithi = cc.idchungchi
+            WHERE COALESCE(lt.SoLuongThiSinhHienTai, 0) < COALESCE(pt.SoChoTrong, 0)
+        `);
 
         res.json(schedules);
     } catch (error) {
@@ -46,6 +38,7 @@ router.get('/get-schedules', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch schedules' });
     }
 });
+
 
 
 router.post('/add-register', async (req, res) => {

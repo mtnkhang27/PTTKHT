@@ -25,14 +25,20 @@ function Register() {
 
   const [showCustomerButton, setShowCustomerButton] = useState(false);
 
+  // Chứng chỉ
   const [certificates, setCertificates] = useState([]);
   const [certificateOption, setCertificateOption] = useState('');
 
+  // Lịch thi
   const [availableSchedules, setAvailableSchedules] = useState([]);
   const [selectedSchedules, setSelectedSchedules] = useState([]);
+  const [selectedScheduleDetail, setSelectedScheduleDetail] = useState(null);
+  const [allSchedules, setAllSchedules] = useState([]); 
+
+  // Đăng ký
   const [registrationDetails, setRegistrationDetails] = useState(null);
   const [submissionStatus,  setSubmissionStatus] = useState(null);
-  const [selectedScheduleDetail, setSelectedScheduleDetail] = useState(null);
+
 
 
 
@@ -49,6 +55,7 @@ function Register() {
       console.error('Failed to fetch certificates:', error);
     }
   };
+
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -137,8 +144,18 @@ function Register() {
     }
   ];
 
-  const hienThiLichThiHienCo = () => {    
-    setAvailableSchedules(mockSchedules);
+  const hienThiLichThiHienCo = async () => {    
+    try {
+      const response = await axios.get(`${apiUrl}/api/register/get-schedules`);
+      const cleanedData = response.data.map(s => ({
+        ...s,
+       soluongthisinhhientai: s.soluongthisinhhientai ?? 0
+      }));
+      setAllSchedules(cleanedData); 
+      setAvailableSchedules([]); 
+    } catch (error) {
+      console.error('Failed to fetch schedules:', error);
+    }
   };
 
   const hienThiLichThiDaChon = () => {
@@ -146,15 +163,15 @@ function Register() {
   
     const schedule = selectedSchedules[0]; // only one
     return (
-      <div key={schedule.IDLichThi} className="schedule-item-selection">
-        <div><strong>Lịch thi {schedule.IDLichThi}</strong></div>
-        <div>Ngày thi: {schedule.NgayThi}</div>
-        <div>Giờ thi: {schedule.GioThi}</div>
-        <div>Địa điểm: {schedule.DiaDiem}</div>
-        <div>ID Phòng: {schedule.IDPhong}</div>
-        <div>Nhân viên coi thi: {schedule.NhanVienCoiThi}</div>
-        <div>Chứng chỉ thi: {schedule.ChungChiThi}</div>
-        <div>Số lượng thí sinh: {schedule.SoLuongThiSinhHienTai} / {schedule.SoLuongThiSinh}</div>
+      <div key={schedule.idlichthi} className="schedule-item-selection">
+        <div><strong>Lịch thi {schedule.idlichthi}</strong></div>
+        <div>Ngày thi: {schedule.ngaythi}</div>
+        <div>Giờ thi: {schedule.giothi}</div>
+        <div>Địa điểm: {schedule.diadiem}</div>
+        <div>ID Phòng: {schedule.idphong}</div>
+        <div>Nhân viên coi thi: {schedule.nhanviencoithi}</div>
+        <div>Chứng chỉ thi: {schedule.tenchungchi}</div>
+        <div>Số lượng thí sinh: {schedule.soluongthisinhhientai ?? 0} / {schedule.sochotrong}</div>
         <button onClick={() => handleRemoveSelectedSchedule(schedule.IDLichThi)}>Xóa</button>
       </div>
     );
@@ -228,29 +245,28 @@ function Register() {
   };
 
   const handleCertificateOptionChange = (e) => {
-    const selected = e.target.value;
-    setCertificateOption(selected);
+    const selectedId = e.target.value;
+    setCertificateOption(selectedId);
   
-    if (selected === '') {
+    if (!selectedId) {
       setAvailableSchedules([]);
-    } else {
-      const selectedCert = certificates.find(
-        (cert) => String(cert.idchungchi) === selected
-      );
-  
-      if (!selectedCert) {
-        setAvailableSchedules([]);
-        return;
-      }
-  
-      const filtered = mockSchedules.filter(
-        (s) => s.ChungChiThi.toLowerCase() === selectedCert.tenchungchi.toLowerCase()
-      );
-  
-      setAvailableSchedules(filtered);
+      return;
     }
+  
+    const selectedCert = certificates.find(cert => String(cert.idchungchi) === selectedId);
+    if (!selectedCert) {
+      setAvailableSchedules([]);
+      return;
+    }
+  
+    const filtered = allSchedules.filter(
+      (s) => s.tenchungchi?.toLowerCase() === selectedCert.tenchungchi.toLowerCase()
+    );
+  
+    setAvailableSchedules(filtered);
   };
   
+    
   
   // const toggleRegisterType = () => {
   //   setRegisterType(prevType => (prevType === 'individual' ? 'unit' : 'individual'));
@@ -431,7 +447,7 @@ function Register() {
 
           {availableSchedules.map(schedule => (
             <div
-              key={schedule.IDLichThi}
+              key={schedule.idlichthi}
               className="schedule-item"
               onClick={() => setSelectedScheduleDetail(schedule)}
               style={{
@@ -450,9 +466,10 @@ function Register() {
                 boxSizing: 'border-box',
               }}
             >
-              <div style={{ fontSize: '16px', marginBottom: '8px', whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }}>
-                <strong>Lịch thi {schedule.IDLichThi}</strong><br />
-                Ngày thi: {schedule.NgayThi}
+              <div style={{ fontSize: '16px', marginBottom: '8px', whiteSpace: 'normal', wordBreak: 'break-word'}}>
+              <strong>Lịch thi {schedule.idlichthi}</strong><br />
+              Ngày thi: {schedule.ngaythi}<br />
+              Số lượng thí sinh: {schedule.soluongthisinhhientai ?? 0} / {schedule.sochotrong}
               </div>
 
               <button
@@ -505,13 +522,13 @@ function Register() {
                 }}
               >
                 <h2>Chi tiết lịch thi</h2>
-                <p><strong>Ngày thi:</strong> {selectedScheduleDetail.NgayThi}</p>
-                <p><strong>Giờ thi:</strong> {selectedScheduleDetail.GioThi}</p>
-                <p><strong>Địa điểm:</strong> {selectedScheduleDetail.DiaDiem}</p>
-                <p><strong>Phòng:</strong> {selectedScheduleDetail.IDPhong}</p>
-                <p><strong>Nhân viên coi thi:</strong> {selectedScheduleDetail.NhanVienCoiThi}</p>
-                <p><strong>Chứng chỉ:</strong> {selectedScheduleDetail.ChungChiThi}</p>
-                <p><strong>Số lượng thí sinh:</strong> {selectedScheduleDetail.SoLuongThiSinhHienTai} / {selectedScheduleDetail.SoLuongThiSinh}</p>
+                <p><strong>Ngày thi:</strong> {selectedScheduleDetail.ngaythi}</p>
+                <p><strong>Giờ thi:</strong> {selectedScheduleDetail.giothi}</p>
+                <p><strong>Địa điểm:</strong> {selectedScheduleDetail.diadiem}</p>
+                <p><strong>Phòng:</strong> {selectedScheduleDetail.idphong}</p>
+                <p><strong>Nhân viên coi thi:</strong> {selectedScheduleDetail.nhanviencoithi}</p>
+                <p><strong>Chứng chỉ:</strong> {selectedScheduleDetail.tenchungchi}</p>
+                <p><strong>Số lượng thí sinh:</strong> {selectedScheduleDetail.soluongthisinhhientai ?? 0} / {selectedScheduleDetail.sochotrong}</p>
 
                 <button onClick={() => setSelectedScheduleDetail(null)}>Đóng</button>
               </div>
