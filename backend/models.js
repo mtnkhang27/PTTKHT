@@ -73,7 +73,8 @@ const KhachHang = sequelize.define('khachhang', {
   idkhachhang: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    autoIncrement: true
   },
   loaikhachhang: {
     type: DataTypes.STRING(255)
@@ -99,7 +100,8 @@ const QuyDinhTrungTam = sequelize.define('quydinhtrungtam', {
   idquydinh: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    autoIncrement: true
   },
   mota: {
     type: DataTypes.TEXT
@@ -144,7 +146,8 @@ const PhieuDangKy = sequelize.define('phieudangky', {
   idphieudangky: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    autoIncrement: true
   },
   idkhachhang: {
     type: DataTypes.INTEGER,
@@ -175,7 +178,8 @@ const PhieuDuThi = sequelize.define('phieuduthi', {
   sobaodanh: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    autoIncrement: true
   },
   idphieudangky: {
     type: DataTypes.INTEGER,
@@ -226,7 +230,8 @@ const ChungChi = sequelize.define('chungchi', {
   idchungchi: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    autoIncrement: true
   },
   tenchungchi: {
     type: DataTypes.STRING(255)
@@ -244,7 +249,7 @@ const HoaDon = sequelize.define('hoadon', {
     type: DataTypes.INTEGER,
     primaryKey: true,
     allowNull: false,
-    autoIncrement: true // Đảm bảo idhoadon tự động tăng
+    autoIncrement: true
   },
   idphieudangky: {
     type: DataTypes.INTEGER,
@@ -281,7 +286,8 @@ const NhanVien = sequelize.define('nhanvien', {
   idnhanvien: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    autoIncrement: true
   },
   tennhanvien: {
     type: DataTypes.STRING(255)
@@ -304,7 +310,8 @@ const LichThi = sequelize.define('lichthi', {
   idlichthi: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    autoIncrement: true
   },
   ngaythi: {
     type: DataTypes.DATE
@@ -345,7 +352,8 @@ const PhongThi = sequelize.define('phongthi', {
   idphong: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    autoIncrement: true
   },
   succhua: {
     type: DataTypes.INTEGER
@@ -362,7 +370,8 @@ const DonViChamThi = sequelize.define('donvichamthi', {
   iddonvi: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    autoIncrement: true
   },
   tendonvi: {
     type: DataTypes.STRING(255)
@@ -372,13 +381,13 @@ const DonViChamThi = sequelize.define('donvichamthi', {
   timestamps: false
 });
 
-// Một phiếu đăng ký có thể là của đơn vị
+// Associations
+
 PhieuDangKy.hasOne(PhieuDangKyDonVi, {
   foreignKey: 'idphieudangky',
-  as: 'donvi' // alias này sẽ dùng trong include
+  as: 'donvi'
 });
 
-// PhieuDangKy -> ChungChiDangKy
 PhieuDangKy.hasMany(ChungChiDangKy, {
   foreignKey: 'idphieudangky',
   as: 'chungchidangkys'
@@ -387,7 +396,6 @@ ChungChiDangKy.belongsTo(PhieuDangKy, {
   foreignKey: 'idphieudangky'
 });
 
-// ChungChiDangKy -> ChungChi
 ChungChiDangKy.belongsTo(ChungChi, {
   foreignKey: 'idchungchi',
   as: 'chungchi'
@@ -397,11 +405,8 @@ ChungChi.hasMany(ChungChiDangKy, {
   as: 'dangkychungchi'
 });
 
-// ChungChi -> LichThi
 ChungChi.hasMany(LichThi, { foreignKey: 'chungchithi' });
 LichThi.belongsTo(ChungChi, { foreignKey: 'chungchithi' });
-
-
 
 module.exports = {
   PhieuGiaHan,

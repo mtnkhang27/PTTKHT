@@ -183,6 +183,35 @@ ADD CONSTRAINT FK_HoaDon_NhanVien FOREIGN KEY (NhanVienLapHoaDon) REFERENCES Nha
 --alter table hoadon 
 --add column LoaiThanhToan VARCHAR(255) null;
 
+-- Alter LePhiThi in ChungChi to DECIMAL(10, 2) NULL
+--ALTER TABLE ChungChi
+--ALTER COLUMN LePhiThi TYPE DECIMAL(10, 2),
+--ALTER COLUMN LePhiThi DROP NOT NULL;
+--
+---- Alter PhiGiaHan in PhieuGiaHan to DECIMAL(10, 2) NULL
+--ALTER TABLE PhieuGiaHan
+--ALTER COLUMN PhiGiaHan TYPE DECIMAL(10, 2),
+--ALTER COLUMN PhiGiaHan DROP NOT NULL;
+--
+---- Alter GiamGia in PhieuDangKyDonVi to DECIMAL(5, 2) NULL
+--ALTER TABLE PhieuDangKyDonVi
+--ALTER COLUMN GiamGia TYPE DECIMAL(5, 2),
+--ALTER COLUMN GiamGia DROP NOT NULL;
+--
+---- Alter TongTien in HoaDon to DECIMAL(13, 2) NULL
+--ALTER TABLE HoaDon
+--ALTER COLUMN TongTien TYPE DECIMAL(13, 2),
+--ALTER COLUMN TongTien DROP NOT NULL;
+
+select * from khachhang k;
+select * from phieudangky p; 
+select * from phieuduthi pdt;
+select * from chungchidangky c;
+select * from lichthi l 
+
+
+
+
 
 
 

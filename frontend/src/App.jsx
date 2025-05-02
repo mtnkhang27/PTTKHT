@@ -23,7 +23,7 @@ function App() {
             {/* <Route path="/register" element={<ProtectedRoute><Register /></ProtectedRoute>} /> */}
             <Route path="/add-customer" element={<Customer />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/payment" element={<ProtectedRoute><Payment /></ProtectedRoute>} />
+            <Route path="/payment" element={<Payment />} />
             <Route path="/extend-test" element={<ProtectedRoute><ExtendTest /></ProtectedRoute>} />
             <Route path="/certificate" element={<ProtectedRoute><Certificate /></ProtectedRoute>} />
           </Routes>
