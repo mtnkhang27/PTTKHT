@@ -39,18 +39,19 @@ INSERT INTO donvichamthi (iddonvi, tendonvi) VALUES
 -- Mock data for PhieuDangKy
 INSERT INTO phieudangky (idphieudangky, idkhachhang, nhanvientiepnhan, ngaydangky, trangthai) VALUES
 (501, 1, 101, '2025-03-15', 'Da tiep nhan'),
-(502, 2, 101, '2025-03-20', 'Da tiep nhan'),
+(502, 2, 101, '2025-05-01', 'Da tiep nhan'),
 (503, 3, 101, '2025-03-25', 'Da tiep nhan'),
 (504, 4, 101, '2025-04-01', 'Da tiep nhan'),
 (505, 5, 101, '2025-04-05', 'Da tiep nhan');
 
+
 -- Mock data for LichThi
-INSERT INTO lichthi (idlichthi, ngaythi, giothi, diadiem, idphong, nhanviencoithi, chungchithi, soluongthisinh) VALUES
-(601, '2025-04-20', '08:00:00', 'Phong 301, 123 Le Loi', 301, 103, 201, 100),
-(602, '2025-04-20', '14:00:00', 'Phong 302, 123 Le Loi', 302, 103, 202, 100),
-(603, '2025-04-25', '09:00:00', 'Phong 303, 456 Nguyen Trai', 303, 103, 203, 100),
-(604, '2025-04-25', '15:00:00', 'Phong 304, 456 Nguyen Trai', 304, 103, 204, 100),
-(605, '2025-04-27', '10:00:00', 'Phong 305, 789 Hai Ba Trung', 305, 103, 205, 100);
+INSERT INTO lichthi (idlichthi, ngaythi, giothi, diadiem, idphong, nhanviencoithi, chungchithi) VALUES
+(601, '2025-04-20', '08:00:00', 'Phong 301, 123 Le Loi', 301, 103, 201),
+(602, '2025-04-20', '14:00:00', 'Phong 302, 123 Le Loi', 302, 103, 202),
+(603, '2025-04-25', '09:00:00', 'Phong 303, 456 Nguyen Trai', 303, 103, 203),
+(604, '2025-04-25', '15:00:00', 'Phong 304, 456 Nguyen Trai', 304, 103, 204),
+(605, '2025-04-27', '10:00:00', 'Phong 305, 789 Hai Ba Trung', 305, 103, 205);
 
 
 -- Mock data for PhieuGiaHan
@@ -78,12 +79,32 @@ INSERT INTO chungchidangky (idphieudangky, idchungchi) VALUES
 (505, 205);
 
 -- Mock data for PhieuDuThi
-INSERT INTO phieuduthi (sobaodanh, idphieudangky, idlichthi, iddonvi, nhanvienghinhandiem, ketquathi, diemsothi, thoigiannhanchungchi, xacnhannhanchungchi) VALUES
-(801, 501, 601, 401, 104, 'Dat', 78.5, '2025-05-10', true),
-(802, 502, 602, 402, 104, 'Khong dat', 45.0, NULL, false),
-(803, 503, 603, 401, 104, 'Dat', 85.2, '2025-05-15', true),
-(804, 504, 601, 403, 104, 'Dat', 60.0, NULL, false),
-(805, 505, 605, 402, 104, 'Dat', 90.1, '2025-05-20', true);
+INSERT INTO phieuduthi (sobaodanh, idphieudangky, idlichthi, iddonvi, nhanvienghinhandiem, ketquathi, diemsothi, thoigiannhanchungchi, xacnhannhanchungchi, ngaysinhts, tenthisinh) VALUES
+(801, 501, 601, 401, 104, 'Dat', 78.5, '2025-05-10', true, '2000-03-15', 'Nguyen Van A'),
+(802, 502, 602, 402, 104, 'Khong dat', 45.0, NULL, false, '1999-11-20', 'Tran Thi B'),
+(803, 503, 603, 401, 104, 'Dat', 85.2, '2025-05-15', true, '2001-07-01', 'Le Hoang C'),
+(804, 504, 601, 403, 104, 'Dat', 60.0, NULL, false, '2002-05-10', 'Pham Ngoc D'),
+(805, 505, 605, 402, 104, 'Dat', 90.1, '2025-05-20', true, '2000-12-25', 'Hoang Minh E');
+
+--UPDATE phieuduthi
+--SET ngaysinhts = '2000-03-15', tenthisinh = 'Nguyen Van A'
+--WHERE sobaodanh = 801;
+--
+--UPDATE phieuduthi
+--SET ngaysinhts = '1999-11-20', tenthisinh = 'Tran Thi B'
+--WHERE sobaodanh = 802;
+--
+--UPDATE phieuduthi
+--SET ngaysinhts = '2001-07-01', tenthisinh = 'Le Hoang C'
+--WHERE sobaodanh = 803;
+--
+--UPDATE phieuduthi
+--SET ngaysinhts = '2002-05-10', tenthisinh = 'Pham Ngoc D'
+--WHERE sobaodanh = 804;
+--
+--UPDATE phieuduthi
+--SET ngaysinhts = '2000-12-25', tenthisinh = 'Hoang Minh E'
+--WHERE sobaodanh = 805;
 
 -- Mock data for HoaDon
 INSERT INTO hoadon (idhoadon, idphieudangky, ngaythanhtoan, tongtien, nhanvienlaphoadon, trangthai) VALUES

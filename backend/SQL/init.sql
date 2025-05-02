@@ -1,6 +1,6 @@
 -- Table: KhachHang
 CREATE TABLE IF NOT EXISTS KhachHang (
-  IDKhachHang INT NOT NULL PRIMARY KEY,
+  IDKhachHang SERIAL NOT NULL PRIMARY KEY,
   LoaiKhachHang VARCHAR(255) NULL,
   TenKhachHang VARCHAR(255) NULL,
   Email VARCHAR(255) NULL,
@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS KhachHang (
 
 -- Table: NhanVien
 CREATE TABLE IF NOT EXISTS NhanVien (
-  IDNhanVien INT NOT NULL PRIMARY KEY,
+  IDNhanVien SERIAL NOT NULL PRIMARY KEY,
   TenNhanVien VARCHAR(255) NULL,
   LoaiNhanVien VARCHAR(255) NULL,
   TrangThai VARCHAR(255) NULL,
@@ -19,27 +19,27 @@ CREATE TABLE IF NOT EXISTS NhanVien (
 
 -- Table: ChungChi
 CREATE TABLE IF NOT EXISTS ChungChi (
-  IDChungChi INT NOT NULL PRIMARY KEY,
+  IDChungChi SERIAL NOT NULL PRIMARY KEY,
   TenChungChi VARCHAR(255) NULL,
   LePhiThi DECIMAL(10, 2) NULL
 );
 
 -- Table: PhongThi
 CREATE TABLE IF NOT EXISTS PhongThi (
-  IDPhong INT NOT NULL PRIMARY KEY,
+  IDPhong SERIAL NOT NULL PRIMARY KEY,
   SucChua INT NULL,
   SoChoTrong INT NULL
 );
 
 -- Table: DonViChamThi
 CREATE TABLE IF NOT EXISTS DonViChamThi (
-  IDDonVi INT NOT NULL PRIMARY KEY,
+  IDDonVi SERIAL NOT NULL PRIMARY KEY,
   TenDonVi VARCHAR(255) NULL
 );
 
 -- Table: PhieuDangKy
 CREATE TABLE IF NOT EXISTS PhieuDangKy (
-  IDPhieuDangKy INT NOT NULL PRIMARY KEY,
+  IDPhieuDangKy SERIAL NOT NULL PRIMARY KEY,
   IDKhachHang INT NULL,
   NhanVienTiepNhan INT NULL,
   NgayDangKy DATE NULL,
@@ -48,20 +48,19 @@ CREATE TABLE IF NOT EXISTS PhieuDangKy (
 
 -- Table: LichThi
 CREATE TABLE IF NOT EXISTS LichThi (
-  IDLichThi INT NOT NULL PRIMARY KEY,
+  IDLichThi SERIAL NOT NULL PRIMARY KEY,
   NgayThi DATE NULL,
   GioThi TIME NULL,
   DiaDiem VARCHAR(255) NULL,
   IDPhong INT NULL,
   NhanVienCoiThi INT NULL,
-  ChungChiThi INT NULL
-  SoLuongThiSinh INT NULL,
-  SoLuongThiSinhHienTai INT NULL,
+  ChungChiThi INT null,
+  SoLuongThiSinhHienTai INT NULL
 );
 
 -- Table: PhieuGiaHan
 CREATE TABLE IF NOT EXISTS PhieuGiaHan (
-  IDPhieuDangKy INT NOT NULL,
+  IDPhieuDangKy SERIAL NOT NULL,
   NgayGiaHan DATE NOT NULL,
   NhanVienGiaHan INT NULL,
   LichThiMoi INT NULL,
@@ -72,27 +71,27 @@ CREATE TABLE IF NOT EXISTS PhieuGiaHan (
 
 -- Table: PhieuDangKyDonVi
 CREATE TABLE IF NOT EXISTS PhieuDangKyDonVi (
-  IDPhieuDangKy INT NOT NULL PRIMARY KEY,
+  IDPhieuDangKy SERIAL NOT NULL PRIMARY KEY,
   SoLuongThiSinh INT NULL,
   GiamGia DECIMAL(5, 2) NULL
 );
 
 -- Table: QuyDinhTrungTam
 CREATE TABLE IF NOT EXISTS QuyDinhTrungTam (
-  IDQuyDinh INT NOT NULL PRIMARY KEY,
+  IDQuyDinh SERIAL NOT NULL PRIMARY KEY,
   MoTa TEXT NULL
 );
 
 -- Table: ChungChiDangKy
 CREATE TABLE IF NOT EXISTS ChungChiDangKy (
-  IDPhieuDangKy INT NOT NULL,
+  IDPhieuDangKy SERIAL NOT NULL,
   IDChungChi INT NOT NULL,
   PRIMARY KEY (IDPhieuDangKy, IDChungChi)
 );
 
 -- Table: PhieuDuThi
 CREATE TABLE IF NOT EXISTS PhieuDuThi (
-  SoBaoDanh INT NOT NULL PRIMARY KEY,
+  SoBaoDanh SERIAL NOT NULL PRIMARY KEY,
   IDPhieuDangKy INT NULL,
   IDLichThi INT NULL,
   IDDonVi INT NULL,
@@ -100,12 +99,14 @@ CREATE TABLE IF NOT EXISTS PhieuDuThi (
   KetQuaThi VARCHAR(255) NULL,
   DiemSoThi FLOAT NULL,
   ThoiGianNhanChungChi DATE NULL,
-  XacNhanNhanChungChi BOOLEAN NULL
+  XacNhanNhanChungChi BOOLEAN null,
+  TenThiSinh VARCHAR(255) null,
+  NgaySinhTS DATE null
 );
 
 -- Table: HoaDon
 CREATE TABLE IF NOT EXISTS HoaDon (
-  IDHoaDon SERIAL INT NOT NULL PRIMARY KEY,
+  IDHoaDon SERIAL NOT NULL PRIMARY KEY,
   IDPhieuDangKy INT NULL,
   NgayThanhToan DATE NULL,
   TongTien DECIMAL(13, 2) NULL,
@@ -166,3 +167,22 @@ ADD CONSTRAINT FK_HoaDon_PhieuDangKy FOREIGN KEY (IDPhieuDangKy) REFERENCES Phie
 
 ALTER TABLE HoaDon
 ADD CONSTRAINT FK_HoaDon_NhanVien FOREIGN KEY (NhanVienLapHoaDon) REFERENCES NhanVien (IDNhanVien);
+
+-- fix db
+--ALTER TABLE LichThi
+--DROP COLUMN SoLuongThiSinh;
+--
+--alter table phieuduthi 
+--add column TenThiSinh VARCHAR(255) NULL;
+--
+--alter table phieuduthi 
+--add column  NgaySinhTS DATE NULL;
+--
+--select * from phieuduthi p 
+
+--alter table hoadon 
+--add column LoaiThanhToan VARCHAR(255) null;
+
+
+
+

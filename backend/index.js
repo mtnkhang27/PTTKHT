@@ -4,7 +4,11 @@ const { PhieuDuThi } = require('./models'); // Import your Sequelize models
 const { ChungChi } = require('./models');
 const cors = require('cors');
 const paymentRoutes = require('./payment/paymentRoutes');
+const registerRoutes = require('./register/registerRouter'); // Import the registerRouter
+
 const path = require('path'); // ✅ Thêm dòng này
+
+
 
 const app = express();
 const port = 3458;
@@ -16,7 +20,7 @@ app.use(cors({
   credentials: true,
 }));
 
-app.get('/api/certificates/', async (req, res) => {
+app.get('/api/exam-tickets/', async (req, res) => {
   
     try {
       const phieuDuThi = await PhieuDuThi.findAll();
@@ -30,7 +34,7 @@ app.get('/api/certificates/', async (req, res) => {
   });
 
 // API endpoint to get certificate information
-app.get('/api/certificates/:sobaodanh', async (req, res) => {
+app.get('/api/exam-tickets/:sobaodanh', async (req, res) => {
   const { sobaodanh } = req.params;
 
   try {
@@ -53,7 +57,7 @@ app.get('/api/certificates/:sobaodanh', async (req, res) => {
 app.use('/invoices', express.static(path.join(__dirname, 'invoices')));
 
 // API endpoint to update certificate received confirmation
-app.put('/api/certificates/:sobaodanh/confirm', async (req, res) => {
+app.put('/api/exam-tickets/:sobaodanh/confirm', async (req, res) => {
   const { sobaodanh } = req.params;
 
   try {
@@ -78,6 +82,8 @@ app.put('/api/certificates/:sobaodanh/confirm', async (req, res) => {
 });
 
 app.use('/api/payment', paymentRoutes);
+
+app.use('/api/register', registerRoutes); // Use the registerRouter for handling registration-related routes
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);

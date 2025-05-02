@@ -13,7 +13,7 @@ function Certificate() {
     const fetchAllCertificates = async () => {
       setError(null);
       try {
-        const response = await fetch(`${apiUrl}/api/certificates/`);
+        const response = await fetch(`${apiUrl}/api/exam-tickets/`);
         if (!response.ok) {
           setError('Lỗi khi lấy danh sách chứng chỉ.');
           return;
@@ -34,7 +34,7 @@ function Certificate() {
     setCertificateInfo(null);
 
     try {
-      const response = await fetch(`${apiUrl}/api/certificates/${examId}`);
+      const response = await fetch(`${apiUrl}/api/exam-tickets/${examId}`);
       if (!response.ok) {
         setError(response.status === 404 ? 'Không tìm thấy thông tin.' : 'Lỗi khi lấy thông tin.');
         return;
@@ -50,7 +50,7 @@ function Certificate() {
   const handleReceiveCertificate = async (sobaodanhToConfirm) => {
     setError(null);
     try {
-      const response = await fetch(`${apiUrl}/api/certificates/${sobaodanhToConfirm}/confirm`, {
+      const response = await fetch(`${apiUrl}/api/exam-tickets/${sobaodanhToConfirm}/confirm`, {
         method: 'PUT',
       });
       if (!response.ok) {
