@@ -12,6 +12,40 @@ function Payment() {
   const [invoiceCreated, setInvoiceCreated] = useState(false);
   const [invoiceDetails, setInvoiceDetails] = useState(null);
 
+  const handleDownloadInvoice = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/api/payment/download-invoice/${invoiceDetails.mahoadon}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paymentMethod,
+          totalAmount: isUnit
+            ? unitPaymentDetails?.finalFee
+            : paymentInfo?.feePerCandidate,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.error || 'Lỗi khi tải hóa đơn');
+        return;
+      }
+  
+      const data = await response.json();
+      const fileUrl = `${apiUrl}${data.invoice.link}`;
+  
+      // Tạo link tải và click tự động
+      const a = document.createElement('a');
+      a.href = fileUrl;
+      a.download = `${data.invoice.mahoadon}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch (err) {
+      alert('Lỗi khi tải hóa đơn');
+    }
+  };
+  
   const handleCheckPayment = async () => {
     try {
       const response = await fetch(`${apiUrl}/api/payment/check/${registrationId}`);
@@ -66,6 +100,7 @@ function Payment() {
       if (response.ok) {
         setInvoiceCreated(true);
         setInvoiceDetails(data.invoice);
+        console.log(data.invoice);
       } else {
         alert(data.error || 'Không thể lập hóa đơn');
       }
@@ -116,7 +151,7 @@ function Payment() {
           <p><strong>Trạng thái:</strong> {paymentInfo.status}</p>
 
           {!isUnit ? (
-            <p><strong>Phí thanh toán:</strong> {paymentInfo.feePerCandidate.toLocaleString()} VNĐ</p>
+            <p><strong>Phí thanh toán:</strong> {paymentInfo.lephithiList[0].toLocaleString()} VNĐ</p>
           ) : (
             <div className="unit-details">
               <h3>Ưu đãi đơn vị</h3>
@@ -154,14 +189,11 @@ function Payment() {
           {invoiceCreated && invoiceDetails && (
             <div className="invoice-info">
               <p>Mã hóa đơn: <strong>{invoiceDetails.mahoadon}</strong></p>
-              <a
-                href={invoiceDetails.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="payment-link"
-              >
-                Xem / Tải hóa đơn (PDF)
-              </a>
+              <button onClick={handleDownloadInvoice} className="payment-button">
+  Xem / Tải hóa đơn (PDF)
+</button>
+
+
             </div>
           )}
 

@@ -6,6 +6,10 @@ const cors = require('cors');
 const paymentRoutes = require('./payment/paymentRoutes');
 const registerRoutes = require('./register/registerRouter'); // Import the registerRouter
 
+const path = require('path'); // ✅ Thêm dòng này
+
+
+
 const app = express();
 const port = 3458;
 
@@ -50,6 +54,7 @@ app.get('/api/exam-tickets/:sobaodanh', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch certificate information' });
   }
 });
+app.use('/invoices', express.static(path.join(__dirname, 'invoices')));
 
 // API endpoint to update certificate received confirmation
 app.put('/api/exam-tickets/:sobaodanh/confirm', async (req, res) => {
