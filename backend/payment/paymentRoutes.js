@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const sequelize = require('../database');
 
-const { PhieuDuThi, PhieuDangKy, PhieuDangKyDonVi, NhanVien, HoaDon, ChungChiDangKy, ChungChi } = require('../models'); // Import your Sequelize models
+const { LichThi, PhieuDuThi, PhieuDangKy, PhieuDangKyDonVi, NhanVien, HoaDon, ChungChiDangKy, ChungChi } = require('../models'); // Import your Sequelize models
 
 // Ví dụ một endpoint đơn giản
 router.get('/', (req, res) => {
@@ -35,7 +35,7 @@ router.get('/check/:id', async (req, res) => {
 
     //Kiểm tra quá hạn
     const now = new Date();
-    const registerDate = new Date(phieu.ngaydangky);
+    const registerDate = new Date(phieu.ngaydangky);  
     const diffDays = (now - registerDate) / (1000 * 60 * 60 * 24);
     const overdue = diffDays > 3;
 
@@ -72,23 +72,89 @@ router.post('/confirm/:id', async (req, res) => {
   const id = parseInt(req.params.id);
 
   try {
-    const phieu = await PhieuDangKy.findByPk(id);
+    const phieu = await PhieuDangKy.findByPk(id, {
+      include: [
+        {
+          model: ChungChiDangKy,
+          as: 'chungchidangkys',
+          include: [
+            {
+              model: ChungChi,
+              as: 'chungchi',
+              include: [
+                {
+                  model: LichThi,
+                  as: 'lichthis'
+                }
+              ]
+            }
+          ]
+        },
+        { model: PhieuDangKyDonVi, as: 'donvi', required: false },
+
+      ]
+    });
+    console.log('DONVI' ,phieu.donvi)
+    console.log('DONVI' ,phieu.phieudangkydonvi)
+
     if (!phieu) return res.status(404).json({ error: 'Không tìm thấy phiếu' });
 
     if (phieu.trangthai === 'đã thanh toán') {
       return res.status(400).json({ error: 'Phiếu đã được thanh toán' });
     }
 
-    // Cập nhật trạng thái
+    const hoadon = await HoaDon.findOne({ where: { idphieudangky: id } });
+    if (hoadon) {
+      hoadon.trangthai = 'đã thanh toán';
+      await hoadon.save();
+    }
+
     phieu.trangthai = 'đã thanh toán';
     await phieu.save();
 
-    return res.json({ message: 'Thanh toán thành công', trangthai: phieu.trangthai });
+    // Tạo danh sách phiếu dự thi từ các chứng chỉ đăng ký
+    const createdPhieuDuThis = [];
+
+    for (const ccdk of phieu.chungchidangkys) {
+      const chungchi = ccdk.chungchi;
+      console.log('CHUNG CHI', chungchi);
+    
+      if (!chungchi || !chungchi.lichthis || chungchi.lichthis.length === 0) continue;
+    
+      // Giả sử bạn chọn lịch thi đầu tiên hoặc gần nhất
+      const selectedLichThi = chungchi.lichthis[0]; // có thể sắp xếp nếu cần chọn gần nhất
+    
+      // Nếu là đơn vị thì tạo theo số lượng thí sinh
+      const quantity = (phieu.donvi) ? (phieu.donvi.soluongthisinh || 0) : 1;
+    
+      for (let i = 0; i < quantity; i++) {
+        const newPhieuDuThi = await PhieuDuThi.create({
+          sobaodanh: Math.floor(100000 + Math.random() * 900000),
+          idphieudangky: phieu.idphieudangky,
+          idlichthi: selectedLichThi.idlichthi,
+          iddonvi: phieu.iddonvi || null,
+          nhanvienghinhandiem: null,
+          ketquathi: null,
+          diemsothi: null,
+          thoigiannhanchungchi: null,
+          xacnhannhanchungchi: false
+        });
+    
+        createdPhieuDuThis.push(newPhieuDuThi);
+      }
+    }
+
+    return res.json({
+      message: 'Thanh toán thành công và đã tạo các phiếu dự thi',
+      trangthai: phieu.trangthai,
+      phieuduthis: createdPhieuDuThis
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Lỗi khi xác nhận thanh toán' });
   }
 });
+
 
 // API tạo hóa đơn
 router.post('/create-invoice/:id', async (req, res) => {

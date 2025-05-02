@@ -378,15 +378,29 @@ PhieuDangKy.hasOne(PhieuDangKyDonVi, {
   as: 'donvi' // alias này sẽ dùng trong include
 });
 
-// Đơn vị đăng ký thuộc về một phiếu
-PhieuDangKyDonVi.belongsTo(PhieuDangKy, {
+// PhieuDangKy -> ChungChiDangKy
+PhieuDangKy.hasMany(ChungChiDangKy, {
+  foreignKey: 'idphieudangky',
+  as: 'chungchidangkys'
+});
+ChungChiDangKy.belongsTo(PhieuDangKy, {
   foreignKey: 'idphieudangky'
 });
-// PhieuDangKy
-PhieuDangKy.hasMany(ChungChiDangKy, { foreignKey: 'idphieudangky', as: 'chungchidangkys' });
 
-// ChungChiDangKy
-ChungChiDangKy.belongsTo(ChungChi, { foreignKey: 'idchungchi', as: 'chungchi' });
+// ChungChiDangKy -> ChungChi
+ChungChiDangKy.belongsTo(ChungChi, {
+  foreignKey: 'idchungchi',
+  as: 'chungchi'
+});
+ChungChi.hasMany(ChungChiDangKy, {
+  foreignKey: 'idchungchi',
+  as: 'dangkychungchi'
+});
+
+// ChungChi -> LichThi
+ChungChi.hasMany(LichThi, { foreignKey: 'chungchithi' });
+LichThi.belongsTo(ChungChi, { foreignKey: 'chungchithi' });
+
 
 
 module.exports = {

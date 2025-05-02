@@ -116,7 +116,7 @@ function Payment() {
           <p><strong>Trạng thái:</strong> {paymentInfo.status}</p>
 
           {!isUnit ? (
-            <p><strong>Phí thanh toán:</strong> {paymentInfo.feePerCandidate.toLocaleString()} VNĐ</p>
+            <p><strong>Phí thanh toán:</strong> {paymentInfo.lephithiList[0].toLocaleString()} VNĐ</p>
           ) : (
             <div className="unit-details">
               <h3>Ưu đãi đơn vị</h3>
