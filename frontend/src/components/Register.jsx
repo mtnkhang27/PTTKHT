@@ -23,7 +23,6 @@ function Register() {
     examinees: [],
   });
 
-  const [showCustomerButton, setShowCustomerButton] = useState(false);
 
   // Chứng chỉ
   const [certificates, setCertificates] = useState([]);
@@ -53,6 +52,30 @@ function Register() {
       setCertificates(response.data);
     } catch (error) {
       console.error('Failed to fetch certificates:', error);
+    }
+  };
+
+  const handlePostSubmissionAction = () => {
+    if (submissionStatus === 'success') {
+      // Navigate to payment page or perform any other action
+      navigate('/payment'); // Adjust the path as needed
+    }
+    else if (submissionStatus === 'error') {
+      // Reset the form or perform any other action
+      setIndividualInfo({
+        registrantName: '',
+        registrantContact: '',
+        examineeName: '',
+        examineeDob: '',
+      });
+      setUnitInfo({
+        unitName: '',
+        unitContact: '',
+        examinees: [],
+      });
+      setCertificateOption('');
+      setSelectedSchedules([]);
+      setSubmissionStatus(null); // Reset submission status
     }
   };
 
@@ -107,43 +130,6 @@ function Register() {
     );
   };
   
-
-  const mockSchedules = [
-    {
-      IDLichThi: 1,
-      NgayThi: '2025-05-15',
-      GioThi: '08:00',
-      DiaDiem: 'Hội trường A',
-      IDPhong: 101,
-      NhanVienCoiThi: 1001,
-      ChungChiThi: 'TOEIC',
-      SoLuongThiSinh: 20,
-      SoLuongThiSinhHienTai: 15
-    },
-    {
-      IDLichThi: 2,
-      NgayThi: '2025-05-16',
-      GioThi: '13:00',
-      DiaDiem: 'Hội trường B',
-      IDPhong: 102,
-      NhanVienCoiThi: 1002,
-      ChungChiThi: 'IELTS',
-      SoLuongThiSinh: 20,
-      SoLuongThiSinhHienTai: 15
-    },
-    {
-      IDLichThi: 3,
-      NgayThi: '2025-05-17',
-      GioThi: '19:00',
-      DiaDiem: 'Hội trường C',
-      IDPhong: 103,
-      NhanVienCoiThi: 1003,
-      ChungChiThi: 'VSTEP',
-      SoLuongThiSinh: 20,
-      SoLuongThiSinhHienTai: 15
-    }
-  ];
-
   const hienThiLichThiHienCo = async () => {    
     try {
       const response = await axios.get(`${apiUrl}/api/register/get-schedules`);
@@ -171,7 +157,6 @@ function Register() {
         <div>ID Phòng: {schedule.idphong}</div>
         <div>Nhân viên coi thi: {schedule.nhanviencoithi}</div>
         <div>Chứng chỉ thi: {schedule.tenchungchi}</div>
-        <div>Số lượng thí sinh: {schedule.soluongthisinhhientai ?? 0} / {schedule.sochotrong}</div>
         <button onClick={() => handleRemoveSelectedSchedule(schedule.IDLichThi)}>Xóa</button>
       </div>
     );
@@ -192,6 +177,29 @@ function Register() {
   
 
   const btn_InsertNewRegistration_Click = async () => {
+    // Check for empty fields
+    if (registerType === 'individual') {
+      if (
+        !individualInfo.registrantName ||
+        !individualInfo.registrantContact ||
+        !individualInfo.examineeName ||
+        !individualInfo.examineeDob
+      ) {
+        alert('Please fill in all required fields for individual registration.');
+        return;
+      }
+    } else {
+      if (
+        !unitInfo.unitName ||
+        !unitInfo.unitContact ||
+        !unitInfo.examinees ||
+        unitInfo.examinees.length === 0
+      ) {
+        alert('Please fill in all required fields for unit registration.');
+        return;
+      }
+    }
+  
     const registrationData = {
       registerType,
       registrantName: registerType === 'individual' ? individualInfo.registrantName : unitInfo.unitName,
@@ -208,23 +216,20 @@ function Register() {
             ]
           : unitInfo.examinees,
     };
-    
-
+  
     setRegistrationDetails(registrationData);
-
     console.log("Registration Data:", registrationData);
-
-
-    // try {
-    //   // 👇 Replace URL with your backend API endpoint
-    //   const response = await axios.post('http://localhost:5000/api/register', registrationData);
-    //   console.log("Server Response:", response.data);
-    //   setSubmissionStatus('success');
-    // } catch (error) {
-    //   console.error("Error submitting registration:", error);
-    //   setSubmissionStatus('error');
-    // }
+  
+    try {
+      const response = await axios.post(`${apiUrl}/api/register/add-register`, registrationData);
+      console.log("Server Response:", response.data);
+      setSubmissionStatus('success');
+    } catch (error) {
+      console.error("Error submitting registration:", error);
+      setSubmissionStatus('error');
+    }
   };
+  
 
   const handleRegistrantNameChange = (e) => {
     const value = e.target.value;
@@ -292,8 +297,6 @@ function Register() {
         <input
           type="text"
           id="registrantName"
-          onFocus={() => setShowCustomerButton(true)}
-          onBlur={() => setTimeout(() => setShowButton(false), 200)} // delay to allow button click
           value={
             registerType === 'individual'
               ? individualInfo.registrantName
@@ -302,15 +305,6 @@ function Register() {
           onChange={handleRegistrantNameChange}
           className="form-input w-full pr-20"
         />
-
-        {showCustomerButton && (
-          <button
-            onClick={() => navigate('/add-customer', { state: {registerType} })}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
-          >
-            Thêm thông tin khách hàng
-          </button>
-        )}
       </div>
 
        {/* Contact */}
@@ -547,21 +541,47 @@ function Register() {
       </div>
 
       {/* btnThêmPhiếuĐăngKý: button */}
-      <button onClick={btn_InsertNewRegistration_Click} className="form-submit-button">
-        Thêm phiếu đăng ký
-      </button>
+      <div className="form-actions form-group" style={{ marginTop: '20px' }}>
 
-      {/* Display registration details */}
-      {registrationDetails && (
-        <div className="registration-details">
-          <h2 className="details-title">Thông tin đăng ký:</h2>
-          <pre className="details-text">{JSON.stringify(registrationDetails, null, 2)}</pre>
-        </div>
-      )}
+          {/* Show Submit/Retry button ONLY if submission hasn't been successful */}
+          {submissionStatus !== 'success' && (
+              <button
+                onClick={btn_InsertNewRegistration_Click}
+                className="form-submit-button"
+              >
+                Thêm Phiếu Đăng Ký
+              </button>
+          )}
 
-      {/* Show status */}
-      {submissionStatus === 'success' && <p className="success-message">Đăng ký thành công!</p>}
-      {submissionStatus === 'error' && <p className="error-message">Đăng ký thất bại. Vui lòng thử lại.</p>}
+          {/* Show the conditional GoToPayment/GoBack button AFTER an attempt (success or error) */}
+          {submissionStatus !== null && !isLoading && ( // Only show after attempt and when not loading
+              <button
+                  type="button"
+                  onClick={handlePostSubmissionAction}
+                  // Use different classes for styling based on the outcome
+                  className={submissionStatus === 'success' ? 'form-payment-button' : 'form-goback-button'}
+                  style={{ marginLeft: submissionStatus !== 'success' ? '10px' : '0' }} // Add space only if retry button is also visible
+              >
+                  {submissionStatus === 'success' ? 'Đi đến Thanh toán' : 'Quay Lại'}
+              </button>
+          )}
+      </div>
+      {/* --- End Action Buttons Area --- */}
+
+
+      {/* --- Submission Status Messages --- */}
+      <div className="submission-status" style={{ marginTop: '15px' }}>
+          {submissionStatus === 'success' && (
+              <p className="success-message" style={{ color: 'green', fontWeight: 'bold' }}>
+                  Đăng ký thành công! Nhấn nút "Đi đến Thanh toán" để tiếp tục.
+              </p>
+          )}
+          {submissionStatus === 'error' && !isLoading && (
+              <p className="error-message" style={{ color: 'red', fontWeight: 'bold' }}>
+                  Đăng ký thất bại. Vui lòng kiểm tra lại thông tin. Bạn có thể "Thử lại Đăng ký" hoặc "Quay Lại".
+              </p>
+          )}
+       </div>
     </div>
   );
 
