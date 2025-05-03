@@ -5,8 +5,8 @@ const { ChungChi } = require('./models');
 const cors = require('cors');
 const paymentRoutes = require('./payment/paymentRoutes');
 const registerRoutes = require('./register/registerRouter'); // Import the registerRouter
-const examTicketRoutes = require('./examTicket/examTicket');
-const rescheduleRoutes = require('./reschedule/reschedule') 
+const examTicketRoutes = require('./examTicket/examTicketRoutes');
+const rescheduleRoutes = require('./reschedule/rescheduleRoutes');
 const path = require('path'); // ✅ Thêm dòng này
 
 
