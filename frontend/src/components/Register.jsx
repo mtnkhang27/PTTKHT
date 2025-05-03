@@ -554,7 +554,7 @@ function Register() {
           )}
 
           {/* Show the conditional GoToPayment/GoBack button AFTER an attempt (success or error) */}
-          {submissionStatus !== null && !isLoading && ( // Only show after attempt and when not loading
+          {submissionStatus !== null && ( // Only show after attempt and when not loading
               <button
                   type="button"
                   onClick={handlePostSubmissionAction}
@@ -576,7 +576,7 @@ function Register() {
                   Đăng ký thành công! Nhấn nút "Đi đến Thanh toán" để tiếp tục.
               </p>
           )}
-          {submissionStatus === 'error' && !isLoading && (
+          {submissionStatus === 'error' && (
               <p className="error-message" style={{ color: 'red', fontWeight: 'bold' }}>
                   Đăng ký thất bại. Vui lòng kiểm tra lại thông tin. Bạn có thể "Thử lại Đăng ký" hoặc "Quay Lại".
               </p>

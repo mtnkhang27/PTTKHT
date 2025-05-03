@@ -1,0 +1,113 @@
+/* CustomerRegister.css */
+
+/* Style for the main container wrapping the registration form and list */
+.customer-register-container {
+    /* Center the container horizontally on the page */
+    margin: 2rem auto; /* Adds space top/bottom, auto margins left/right for centering */
+  
+    /* Set a maximum width - adjust as needed */
+    max-width: 600px; /* Makes the container larger but not full screen width */
+  
+    /* Add padding inside the container */
+    padding: 2rem; /* Creates space between the content and the container edge */
+  
+    /* Optional: Add a border and rounded corners for better visual separation */
+    border: 1px solid #ccc;
+    border-radius: 8px; /* Rounded corners */
+  
+    /* Optional: Add a subtle shadow */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  
+    /* Optional: Set a background color if desired */
+    background-color: #f9f9f9;
+  }
+  
+  /* Style adjustments for the form elements for better spacing and appearance */
+  .customer-register-container h2 {
+    text-align: center; /* Center the headings */
+    margin-bottom: 1.5rem; /* Add space below headings */
+    color: #333;
+  }
+  
+  .customer-register-container form div {
+    margin-bottom: 1rem; /* Add space between form fields */
+  }
+  
+  .customer-register-container label {
+    display: block; /* Make labels appear on their own line */
+    margin-bottom: 0.5rem; /* Space between label and input */
+    font-weight: bold;
+    color: #555;
+  }
+  
+  .customer-register-container input[type="text"],
+  .customer-register-container input[type="tel"] {
+    width: 100%; /* Make inputs take full width of their container */
+    padding: 0.75rem; /* Add padding inside inputs */
+    border: 1px solid #ccc;
+    border-radius: 4px; /* Slightly rounded corners for inputs */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  }
+  
+  .customer-register-container button[type="submit"] {
+    display: block; /* Make button block level */
+    width: 100%; /* Make button full width */
+    padding: 0.8rem 1.5rem;
+    background-color: #007bff; /* Example blue color */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease; /* Smooth transition on hover */
+    margin-top: 1rem; /* Space above the button */
+  }
+  
+  .customer-register-container button[type="submit"]:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+  /* Style the table */
+  .customer-register-container table {
+    width: 100%;
+    border-collapse: collapse; /* Remove gaps between cells */
+    margin-top: 2rem; /* Space above the table */
+  }
+  
+  .customer-register-container th,
+  .customer-register-container td {
+    border: 1px solid #ddd; /* Lighter border for table cells */
+    padding: 0.75rem; /* Padding inside cells */
+    text-align: left; /* Align text to the left */
+  }
+  
+  .customer-register-container th {
+    background-color: #f2f2f2; /* Light grey background for headers */
+    font-weight: bold;
+  }
+  
+  .customer-register-container hr {
+    margin: 2rem 0; /* Add more space around the horizontal rule */
+    border: 0;
+    border-top: 1px solid #eee;
+  }
+  
+  .customer-register-container p {
+      text-align: center; /* Center the "no registrations" message */
+      margin-top: 2rem;
+      color: #777;
+  }
+  
+
+  .pay-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pay-btn:hover {
+    background-color: #218838;
+}

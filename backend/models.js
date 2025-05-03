@@ -220,7 +220,14 @@ const PhieuDuThi = sequelize.define('phieuduthi', {
   },
   xacnhannhanchungchi: {
     type: DataTypes.BOOLEAN
-  }
+  },
+  tenthisinh: {
+    type: DataTypes.STRING(255)
+  },
+  ngaysinhts: {
+    type: DataTypes.DATE
+  },
+
 }, {
   tableName: 'phieuduthi',
   timestamps: false
@@ -342,6 +349,11 @@ const LichThi = sequelize.define('lichthi', {
        model: 'chungchi',
        key: 'idchungchi'
      }
+  },
+  
+  soluongthisinhhientai: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
   }
 }, {
   tableName: 'lichthi',

@@ -21,9 +21,9 @@ function Payment() {
 
   // Effect to automatically check payment info if registrationId is received via state
   useEffect(() => {
-    if (registrationId && !paymentInfo) { // Only check if ID exists and info hasn't been loaded yet
-      handleCheckPayment();
-    }
+    // if (registrationId && !paymentInfo) { // Only check if ID exists and info hasn't been loaded yet
+    //   handleCheckPayment();
+    // }
   }, [registrationId, paymentInfo]); // Depend on registrationId and paymentInfo
 
 

@@ -12,7 +12,8 @@ function Home() {
         <Link to="/register" className="home-nav-link">Đăng ký kiểm tra</Link> |
         <Link to="/payment" className="home-nav-link">Thanh toán và phiếu dự thi</Link> |
         <Link to="/extend-test" className="home-nav-link">Gia hạn thời gian thi</Link> |
-        <Link to="/certificate" className="home-nav-link">Cấp chứng chỉ</Link>
+        <Link to="/customer-search-register" className="home-nav-link">Tra cứu phiếu đăng ký</Link> |
+        {/* <Link to="/certificate" className="home-nav-link">Cấp chứng chỉ</Link> */}
       </div>
     </div>
   );

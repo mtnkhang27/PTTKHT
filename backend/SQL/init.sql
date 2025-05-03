@@ -212,6 +212,3 @@ select * from lichthi l
 
 
 
-
-
-

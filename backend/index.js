@@ -7,6 +7,7 @@ const paymentRoutes = require('./payment/paymentRoutes');
 const registerRoutes = require('./register/registerRouter'); // Import the registerRouter
 const examTicketRoutes = require('./examTicket/examTicketRoutes');
 const rescheduleRoutes = require('./reschedule/rescheduleRoutes');
+const searchRoutes = require('./search/searchCustomerRegister'); // Import the search routes
 const path = require('path'); // ✅ Thêm dòng này
 
 
@@ -28,6 +29,8 @@ app.use('/api/exam-tickets', examTicketRoutes);
 app.use('/api/payment', paymentRoutes);
 
 app.use('/api/register', registerRoutes); // Use the registerRouter for handling registration-related routes
+
+app.use('/api/search', searchRoutes); // Use the search routes
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);

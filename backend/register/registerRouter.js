@@ -86,8 +86,8 @@ router.post('/add-register', async (req, res) => {
           diemsothi: null,
           thoigiannhanchungchi: null,
           xacnhannhanchungchi: false,
-          tenthisinh: examinee.examineename,
-          ngaysinhts: examinee.examineedob,
+          tenthisinh: examinee.examineeName,
+          ngaysinhts: examinee.examineeDob,
         });
       }
   
@@ -107,27 +107,22 @@ router.post('/add-register', async (req, res) => {
       const lichthi = await LichThi.findByPk(selectedSchedules[0].idlichthi);
 
       if (lichthi) {
-        const currentValue = lichthi.soluongthisinhhientai;
-        const numToAdd = examinees.length;
-        const calculatedValue = (currentValue || 0) + numToAdd;
+        const currentValue = Number(lichthi.soluongthisinhhientai) || 0;
+        const calculatedValue = currentValue + examinees.length;
         console.log(`Calculated new value for update: ${calculatedValue}`);
-
+      
         try {
-            const [numberOfAffectedRows] = await LichThi.update(
-            { soluongthisinhhientai: calculatedValue }, 
-            { where: { idlichthi: lichthi.idlichthi } } 
-            );
-            console.log(`LichThi update affected ${numberOfAffectedRows} row(s).`);
-            if (numberOfAffectedRows === 0) {
-            console.warn('LichThi update affected 0 rows. Was the ID correct?');
-            }
-        } catch(updateError) {
-            console.error('Error during LichThi.update():', updateError);
-            throw updateError;
+          lichthi.soluongthisinhhientai = calculatedValue;
+          await lichthi.save();
+          console.log('LichThi updated successfully using .save()');
+        } catch (updateError) {
+          console.error('Error during lichthi.save():', updateError);
+          throw updateError;
         }
       } else {
         console.error('LichThi not found for ID:', selectedSchedules[0].idlichthi);
       }
+      
   
       res.status(201).json({
         message: 'Registration successful',
