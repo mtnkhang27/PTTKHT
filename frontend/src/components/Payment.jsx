@@ -313,10 +313,12 @@ function Payment() {
           <p><strong>Trạng thái:</strong> {paymentInfo.status}</p>
 
           {/* Display fee details - adjusted based on isUnit */}
-          {!isUnit && paymentInfo.lephithiList?.length > 0 && (
+          {/* {!isUnit && paymentInfo.lephithiList?.length > 0 && (
              <p><strong>Phí thanh toán:</strong> {formatCurrency(paymentInfo.lephithiList[0])}</p>
+          )} */}
+         {!isUnit && paymentInfo.lephithiList?.length > 0 && (
+             <p><strong>Phí thanh toán:</strong> {formatCurrency(paymentInfo.lephithiList[0].feePerCandidate)}</p>
           )}
-
 
           {isUnit && unitPaymentDetails ? (
             <div className="unit-details-section"> {/* New container for unit details */}
@@ -358,7 +360,8 @@ function Payment() {
                        <ul>
                          {paymentInfo.lephithiList.map((fee, index) => (
                            // Ensure fee is treated as number for formatting
-                           <li key={index}>Chứng chỉ {index + 1}: {formatCurrency(fee)}</li>
+                           console.log(fee),
+                           <li key={index}>Chứng chỉ {fee.tenchungchi}: {formatCurrency(fee.subtotal)}</li>
                          ))}
                        </ul>
                    </div>

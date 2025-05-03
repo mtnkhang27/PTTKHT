@@ -187,9 +187,9 @@ router.post('/confirm/:id', async (req, res) => {
                     {
                       model: ChungChi,
                       as: 'chungchi',
-                      include: [
-                        { model: LichThi, as: 'lichthis' }
-                      ]
+                      // include: [
+                      //   { model: LichThi, as: 'lichthis', required: false }
+                      // ]
                     }
                   ]
                 },
@@ -280,7 +280,7 @@ router.post('/confirm/:id', async (req, res) => {
 
         } else {
             // --- Xử lý thanh toán cho Phiếu Đăng Ký gốc (nếu không có phiếu gia hạn Chua thanh toan) ---
-
+            console.log('vo day');
             // Kiểm tra nếu phiếu gốc Da thanh toan
             if (phieu.trangthai === 'Da thanh toan') {
                 return { status: 400, error: 'Phiếu đăng ký gốc đã được thanh toán' };
