@@ -26,11 +26,11 @@ npm install
 ```sql
 CREATE DATABASE myapp;
 ```
-3.1 Vào file database.js sửa lại connection phù hợp (ví dụ: 'myapp {your_database}', 'postgres {'your_user'}, '1234 {your_password}') 
+4. Chạy file sql init.sql
 
-4. Cập nhật thông tin kết nối database trong file `.env`
+5. Cập nhật thông tin kết nối database trong file `.env`
 
-5. Chạy server:
+6. Chạy server:
 ```bash
 npm run dev
 ```
