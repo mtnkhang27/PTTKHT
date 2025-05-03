@@ -43,7 +43,7 @@ function Payment() {
       // keep the body, but verify the HTTP method. Assuming POST with just ID for now.
 
       const response = await fetch(`${apiUrl}/api/payment/download-invoice/${invoiceDetails.mahoadon}`, {
-        method: 'POST', // Or GET if your backend supports it
+        method: 'GET', // Or GET if your backend supports it
         headers: { 'Content-Type': 'application/json' },
         // body: JSON.stringify({ // Keep this if your backend needs it
         //   paymentMethod, // This might not be necessary for a download

@@ -113,5 +113,5 @@ INSERT INTO hoadon (idhoadon, idphieudangky, ngaythanhtoan, tongtien, nhanvienla
 (901, 501, '2025-03-15', 1500000.00, 105, 'Da thanh toan'),
 (902, 502, '2025-03-20', 4750000.00, 105, 'Da thanh toan'),
 (903, 503, '2025-03-25', 300000.00, 105, 'Da thanh toan'),
-(904, 504, '2025-04-01', 1500000.00, 105, 'Chua thanh toan'),
+(904, 504, '2025-05-01', 1500000.00, 105, 'Chua thanh toan'),
 (905, 505, '2025-04-05', 784000.00, 105, 'Da thanh toan');
