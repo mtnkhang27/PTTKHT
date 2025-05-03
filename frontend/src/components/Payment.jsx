@@ -191,6 +191,43 @@ function Payment() {
     }
   };
 
+  const handleCreateInvoiceIndividual = async () => {
+    const totalAmount = isUnit
+      ? unitPaymentDetails?.finalFee
+      : paymentInfo?.lephithiList?.[0]; // Assuming the first fee in the list is the relevant one for non-unit case
+
+    if (totalAmount === undefined || totalAmount === null) {
+         alert('Không xác định được tổng tiền để lập hóa đơn.');
+         return;
+    }
+
+
+    try {
+      const response = await fetch(`${apiUrl}/api/payment/create-invoice/${registrationId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          paymentMethod : 'transfer', // Assuming this is the method for individual invoices
+          registrationId, // Redundant in path, but harmless to send
+          totalAmount: totalAmount, // Use the determined total amount
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setInvoiceCreated(true);
+        setInvoiceDetails(data.invoice);
+        alert('Hóa đơn đã được lập thành công.'); // Inform the user
+        // console.log(data.invoice); // Keep for debugging if needed
+      } else {
+        alert(data.error || 'Không thể lập hóa đơn');
+      }
+    } catch (err) {
+      console.error('Error during invoice creation:', err); // Log the error
+      alert('Lỗi khi lập hóa đơn. Vui lòng thử lại.');
+    }
+  };
+
 
   const handlePayment = async () => {
       // Ensure paymentInfo is loaded
@@ -364,6 +401,12 @@ function Payment() {
                            <li key={index}>Chứng chỉ {fee.tenchungchi}: {formatCurrency(fee.subtotal)}</li>
                          ))}
                        </ul>
+                       <button
+                        onClick={handleCreateInvoiceIndividual}
+                        className="payment-button create-invoice-button" // Specific class for styling
+                      >
+                        Lập hóa đơn
+                      </button>
                    </div>
                )
           )}

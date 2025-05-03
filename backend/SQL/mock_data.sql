@@ -86,7 +86,7 @@ INSERT INTO phieuduthi (sobaodanh, idphieudangky, idlichthi, iddonvi, nhanviengh
 (802, 502, 602, 402, 104, 'Khong dat', 45.0, NULL, false, '1999-11-20', 'Tran Thi B'),
 (803, 503, 603, 401, 104, 'Dat', 85.2, '2025-05-15', true, '2001-07-01', 'Le Hoang C'),
 (804, 504, 601, 403, 104, 'Dat', 60.0, NULL, false, '2002-05-10', 'Pham Ngoc D'),
-(805, 505, 606, 402, 104, 'Dat', 90.1, '2025-05-20', true, '2000-12-25', 'Hoang Minh E');
+INSERT INTO phieuduthi (sobaodanh, idphieudangky, idlichthi, iddonvi, nhanvienghinhandiem, ketquathi, diemsothi, thoigiannhanchungchi, xacnhannhanchungchi, ngaysinhts, tenthisinh) VALUES(805, 505, 606, 402, 104, 'Dat', 90.1, '2025-05-20', true, '2000-12-25', 'Hoang Minh E');
 
 --UPDATE phieuduthi
 --SET ngaysinhts = '2000-03-15', tenthisinh = 'Nguyen Van A'
