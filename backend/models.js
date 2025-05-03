@@ -13,7 +13,6 @@ const PhieuGiaHan = sequelize.define('phieugiahan', {
   },
   ngaygiahan: {
     type: DataTypes.DATE,
-    primaryKey: true,
     allowNull: false
   },
   nhanviengiahan: {
@@ -25,6 +24,7 @@ const PhieuGiaHan = sequelize.define('phieugiahan', {
   },
   lichthimoi: {
     type: DataTypes.INTEGER,
+    primaryKey: true,
     references: {
       model: 'lichthi',
       key: 'idlichthi'
@@ -392,6 +392,7 @@ PhieuDangKy.hasMany(ChungChiDangKy, {
   foreignKey: 'idphieudangky',
   as: 'chungchidangkys'
 });
+
 ChungChiDangKy.belongsTo(PhieuDangKy, {
   foreignKey: 'idphieudangky'
 });
@@ -404,6 +405,195 @@ ChungChi.hasMany(ChungChiDangKy, {
   foreignKey: 'idchungchi',
   as: 'dangkychungchi'
 });
+
+
+// PhieuDangKy -> PhieuGiaHan (One PhieuDangKy can have many PhieuGiaHan)
+PhieuDangKy.hasMany(PhieuGiaHan, {
+  foreignKey: 'idphieudangky',
+  as: 'phieugiahans' // Use a clear alias
+});
+PhieuGiaHan.belongsTo(PhieuDangKy, {
+  foreignKey: 'idphieudangky'
+});
+
+
+// ChungChi -> LichThi
+ChungChi.hasMany(LichThi, { foreignKey: 'chungchithi' });
+LichThi.belongsTo(ChungChi, { foreignKey: 'chungchithi' });
+
+PhieuDuThi.belongsTo(LichThi, {
+  foreignKey: 'idlichthi', // The foreign key in the PhieuDuThi model
+  as: 'lichthi'            // The alias you used in your include statement
+});
+
+PhieuDuThi.belongsTo(PhieuDangKy, {
+  foreignKey: 'idphieudangky', // The foreign key in the PhieuDuThi model
+  as: 'phieudangky'            // The alias used in your include statement in the router
+});
+
+PhieuDangKy.belongsTo(KhachHang, {
+  foreignKey: 'idkhachhang', // The foreign key in the PhieuDangKy model
+  // No 'as' needed here unless you specify it in the include from PhieuDangKy
+});
+
+LichThi.belongsTo(PhongThi, { foreignKey: 'idphong', as: 'phongthi' });
+
+// --- Missing Associations ---
+// Add these to your existing associations block
+
+// Relationships involving PhieuDangKy (Registration Slip)
+// PhieuDangKy -> KhachHang: Already have PhieuDangKy.belongsTo(KhachHang), adding the reverse
+// Một Khách Hàng có nhiều Phiếu Đăng Ký
+KhachHang.hasMany(PhieuDangKy, {
+  foreignKey: 'idkhachhang'
+});
+
+// PhieuDangKy -> NhanVien (Người tiếp nhận): Thêm cả hai chiều
+// Một phiếu đăng ký được tiếp nhận bởi một Nhân Viên
+PhieuDangKy.belongsTo(NhanVien, {
+  foreignKey: 'nhanvientiepnhan',
+  as: 'NhanVienTiepNhan' // Alias for the employee who received the slip
+});
+// Một Nhân Viên tiếp nhận nhiều Phiếu Đăng Ký
+NhanVien.hasMany(PhieuDangKy, {
+  foreignKey: 'nhanvientiepnhan',
+  as: 'phieudangkyduoctiepnhan' // Alias for the slips received by this employee
+});
+
+// PhieuDangKy -> PhieuDangKyDonVi: Already have PhieuDangKy.hasOne(PhieuDangKyDonVi, { as: 'donvi' }), adding the reverse
+// Một Phiếu Đăng Ký Đơn Vị thuộc về một Phiếu Đăng Ký
+PhieuDangKyDonVi.belongsTo(PhieuDangKy, {
+  foreignKey: 'idphieudangky'
+});
+
+// PhieuDangKy -> PhieuDuThi: Already have PhieuDuThi.belongsTo(PhieuDangKy, { as: 'phieudangky' }), adding the reverse
+// Một phiếu đăng ký có nhiều Phiếu Dự Thi
+PhieuDangKy.hasMany(PhieuDuThi, {
+  foreignKey: 'idphieudangky'
+});
+
+// PhieuDangKy -> HoaDon: Thêm cả hai chiều
+// Một phiếu đăng ký có nhiều Hóa Đơn
+PhieuDangKy.hasMany(HoaDon, {
+  foreignKey: 'idphieudangky'
+});
+// Một Hóa Đơn thuộc về một Phiếu Đăng Ký (gốc)
+// You already have HoaDon.belongsTo(PhieuDangKy, { foreignKey: 'idphieudangky', as: 'phieudangky' }) in your router code, let's define it here officially.
+HoaDon.belongsTo(PhieuDangKy, {
+  foreignKey: 'idphieudangky',
+  as: 'phieudangky' // Alias used in your router code
+});
+
+
+// Relationships involving PhieuGiaHan (Renewal Slip)
+// PhieuGiaHan -> PhieuDangKy: You already have both directions defined. OK.
+
+// PhieuGiaHan -> LichThi (Lịch thi mới): Thêm cả hai chiều
+// Một Phiếu Gia Hạn tham chiếu đến một Lịch Thi mới sau gia hạn
+PhieuGiaHan.belongsTo(LichThi, {
+  foreignKey: 'lichthimoi',
+  as: 'LichThiMoi' // Alias
+});
+// Một Lịch Thi có thể được tham chiếu bởi nhiều Phiếu Gia Hạn (là lịch thi mới)
+LichThi.hasMany(PhieuGiaHan, {
+  foreignKey: 'lichthimoi',
+  as: 'phieugiahansmoi' // Alias
+});
+
+// PhieuGiaHan -> NhanVien (Người gia hạn): Thêm cả hai chiều
+// Một Phiếu Gia Hạn được gia hạn bởi một Nhân Viên
+PhieuGiaHan.belongsTo(NhanVien, {
+  foreignKey: 'nhanviengiahan',
+  as: 'NhanVienGiaHan' // Alias
+});
+// Một Nhân Viên gia hạn nhiều Phiếu Gia Hạn
+NhanVien.hasMany(PhieuGiaHan, {
+  foreignKey: 'nhanviengiahan',
+  as: 'phieugiahandoi' // Alias
+});
+
+
+// Relationships involving ChungChiDangKy (Linking table)
+// PhieuDangKy <-> ChungChiDangKy: You already have both directions defined. OK.
+// ChungChiDangKy <-> ChungChi: You already have both directions defined. OK.
+
+
+// Relationships involving ChungChi (Certificate)
+// ChungChi <-> LichThi: You already have both directions defined. OK.
+
+// ChungChi -> ChungChiDangKy: You already have ChungChi.hasMany(ChungChiDangKy), ChungChiDangKy.belongsTo(ChungChi). OK.
+
+
+// Relationships involving LichThi (Exam Schedule)
+// LichThi <-> ChungChi: You already have both directions defined. OK.
+// LichThi <-> PhongThi: You already have LichThi.belongsTo(PhongThi, { as: 'phongthi' }), adding the reverse
+// Một Phòng Thi có nhiều Lịch Thi
+PhongThi.hasMany(LichThi, {
+  foreignKey: 'idphong'
+});
+
+// LichThi -> PhieuDuThi: Already have PhieuDuThi.belongsTo(LichThi, { as: 'lichthi' }), adding the reverse
+// Một Lịch Thi có nhiều Phiếu Dự Thi
+LichThi.hasMany(PhieuDuThi, {
+  foreignKey: 'idlichthi'
+});
+
+// LichThi -> NhanVien (Coi thi): Thêm cả hai chiều
+// Một Lịch Thi có một Nhân Viên coi thi
+LichThi.belongsTo(NhanVien, {
+  foreignKey: 'nhanviencoithi',
+  as: 'NhanVienCoiThi' // Alias
+});
+// Một Nhân Viên coi nhiều Lịch Thi
+NhanVien.hasMany(LichThi, {
+  foreignKey: 'nhanviencoithi',
+  as: 'lichthiduoccoithi' // Alias
+});
+
+
+// Relationships involving PhieuDuThi (Exam Slip)
+// PhieuDuThi <-> PhieuDangKy: You already have both directions defined. OK (using alias 'phieudangky' on belongsTo).
+// PhieuDuThi <-> LichThi: You already have both directions defined. OK (using alias 'lichthi' on belongsTo).
+
+// PhieuDuThi -> DonViChamThi: Thêm cả hai chiều
+// Một Phiếu Dự Thi được chấm bởi một Đơn Vị Chấm Thi
+PhieuDuThi.belongsTo(DonViChamThi, {
+  foreignKey: 'iddonvi',
+  as: 'DonViChamThi' // Alias
+});
+// Một Đơn Vị Chấm Thi chấm nhiều Phiếu Dự Thi
+DonViChamThi.hasMany(PhieuDuThi, {
+  foreignKey: 'iddonvi'
+});
+
+// PhieuDuThi -> NhanVien (Ghi nhận điểm): Thêm cả hai chiều
+// Điểm của Phiếu Dự Thi được ghi nhận bởi một Nhân Viên
+PhieuDuThi.belongsTo(NhanVien, {
+  foreignKey: 'nhanvienghinhandiem',
+  as: 'NhanVienGhiDiem' // Alias
+});
+// Một Nhân Viên ghi nhận điểm cho nhiều Phiếu Dự Thi
+NhanVien.hasMany(PhieuDuThi, {
+  foreignKey: 'nhanvienghinhandiem',
+  as: 'phieuduthiduocghidiem' // Alias
+});
+
+
+// Relationships involving HoaDon (Invoice)
+// HoaDon <-> PhieuDangKy: Already have HoaDon.belongsTo(PhieuDangKy), adding the reverse. OK.
+
+// HoaDon -> NhanVien (Lập hóa đơn): Thêm cả hai chiều
+// Một Hóa Đơn được lập bởi một Nhân Viên
+HoaDon.belongsTo(NhanVien, {
+  foreignKey: 'nhanvienlaphoadon',
+  as: 'NhanVienLapHoaDon' // Alias
+});
+// Một Nhân Viên lập nhiều Hóa Đơn
+NhanVien.hasMany(HoaDon, {
+  foreignKey: 'nhanvienlaphoadon',
+  as: 'hoadondulap' // Alias
+});
+
 
 ChungChi.hasMany(LichThi, { foreignKey: 'chungchithi' });
 LichThi.belongsTo(ChungChi, { foreignKey: 'chungchithi' });

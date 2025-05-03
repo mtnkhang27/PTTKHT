@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS PhieuGiaHan (
   LichThiMoi INT NULL,
   PhiGiaHan DECIMAL(10, 2) NULL,
   TrangThaiThanhToan VARCHAR(255) NULL,
-  PRIMARY KEY (IDPhieuDangKy, NgayGiaHan)
+  PRIMARY KEY (IDPhieuDangKy, LichThiMoi)
 );
 
 -- Table: PhieuDangKyDonVi
