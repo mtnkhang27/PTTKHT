@@ -8,6 +8,7 @@ const registerRoutes = require('./register/registerRouter'); // Import the regis
 const examTicketRoutes = require('./examTicket/examTicketRoutes');
 const rescheduleRoutes = require('./reschedule/rescheduleRoutes');
 const searchRoutes = require('./search/searchCustomerRegister'); // Import the search routes
+const { scheduleCleanupJob } = require('./cron/overdueRegisterTicket'); // Import the cleanup job function
 const path = require('path'); // ✅ Thêm dòng này
 
 
@@ -31,6 +32,8 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/register', registerRoutes); // Use the registerRouter for handling registration-related routes
 
 app.use('/api/search', searchRoutes); // Use the search routes
+
+scheduleCleanupJob(); // Schedule the cleanup job
 
 app.listen(port, () => {
   console.log(`Server listening at http://localhost:${port}`);

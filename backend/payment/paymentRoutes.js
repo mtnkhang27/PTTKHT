@@ -306,39 +306,39 @@ router.post('/confirm/:id', async (req, res) => {
 
 
             // Tạo danh sách phiếu dự thi từ các chứng chỉ đăng ký gốc
-            for (const ccdk of phieu.chungchidangkys) {
-              const chungchi = ccdk.chungchi;
+            // for (const ccdk of phieu.chungchidangkys) {
+            //   const chungchi = ccdk.chungchi;
 
-              if (!chungchi || !chungchi.lichthis || chungchi.lichthis.length === 0) {
-                   console.warn(`Chứng chỉ ${ccdk.idchungchi} không có lịch thi.`);
-                   continue; // Bỏ qua chứng chỉ không có lịch thi
-              }
+            //   if (!chungchi || !chungchi.lichthis || chungchi.lichthis.length === 0) {
+            //        console.warn(`Chứng chỉ ${ccdk.idchungchi} không có lịch thi.`);
+            //        continue; // Bỏ qua chứng chỉ không có lịch thi
+            //   }
 
-              // Giả sử bạn chọn lịch thi đầu tiên hoặc gần nhất cho lần đăng ký ban đầu
-              // Cần đảm bảo logic chọn lịch thi phù hợp
-              const selectedLichThi = chungchi.lichthis[0]; // có thể sắp xếp nếu cần chọn gần nhất
+            //   // Giả sử bạn chọn lịch thi đầu tiên hoặc gần nhất cho lần đăng ký ban đầu
+            //   // Cần đảm bảo logic chọn lịch thi phù hợp
+            //   const selectedLichThi = chungchi.lichthis[0]; // có thể sắp xếp nếu cần chọn gần nhất
 
-              // Nếu là đơn vị thì tạo theo số lượng thí sinh
-              const quantity = (phieu.donvi) ? (phieu.donvi.soluongthisinh || 0) : 1;
+            //   // Nếu là đơn vị thì tạo theo số lượng thí sinh
+            //   const quantity = (phieu.donvi) ? (phieu.donvi.soluongthisinh || 0) : 1;
 
-              for (let i = 0; i < quantity; i++) {
-                const newPhieuDuThi = await PhieuDuThi.create({
-                  sobaodanh: Math.floor(100000 + Math.random() * 900000), // Sửa lỗi: random số báo danh
-                  idphieudangky: phieu.idphieudangky,
-                  idlichthi: selectedLichThi.idlichthi,
-                  // iddonvi: phieu.iddonvi || null, // iddonvi trong PhieuDuThi tham chiếu DonViChamThi, không phải PhieuDangKyDonVi. Cần kiểm tra lại schema và logic.
-                  // Tạm thời bỏ qua iddonvi hoặc cần tìm iddonvi chấm thi phù hợp
-                  nhanvienghinhandiem: null,
-                  ketquathi: null,
-                  diemsothi: null,
-                  thoigiannhanchungchi: null,
-                  xacnhannhanchungchi: false
-                }, { transaction: t }); // Pass transaction to create operation
+            //   for (let i = 0; i < quantity; i++) {
+            //     const newPhieuDuThi = await PhieuDuThi.create({
+            //       sobaodanh: Math.floor(100000 + Math.random() * 900000), // Sửa lỗi: random số báo danh
+            //       idphieudangky: phieu.idphieudangky,
+            //       idlichthi: selectedLichThi.idlichthi,
+            //       // iddonvi: phieu.iddonvi || null, // iddonvi trong PhieuDuThi tham chiếu DonViChamThi, không phải PhieuDangKyDonVi. Cần kiểm tra lại schema và logic.
+            //       // Tạm thời bỏ qua iddonvi hoặc cần tìm iddonvi chấm thi phù hợp
+            //       nhanvienghinhandiem: null,
+            //       ketquathi: null,
+            //       diemsothi: null,
+            //       thoigiannhanchungchi: null,
+            //       xacnhannhanchungchi: false
+            //     }, { transaction: t }); // Pass transaction to create operation
 
-                createdPhieuDuThis.push(newPhieuDuThi);
-              }
-            }
-        }
+            //     createdPhieuDuThis.push(newPhieuDuThi);
+            //   }
+            // }
+        } // End of else for original registration payment
 
          // Commit transaction if everything was successful
          return {
