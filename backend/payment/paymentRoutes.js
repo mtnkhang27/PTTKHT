@@ -536,7 +536,7 @@ router.get('/download-invoice/:idhoadon', async (req, res) => {
       const invoiceCode = hoadon.idhoadon;
       const totalAmount = parseFloat(hoadon.tongtien || 0); // Lấy từ DB, đảm bảo là số
       const paymentMethod = hoadon.loaithanhtoan || 'Chưa xác định';
-      const invoiceDate = new Date(hoadon.ngaythanhtoan).toLocaleDateString('vi-VN'); // Ngày lập hóa đơn
+      const invoiceDate = new Date().toLocaleDateString('vi-VN'); // Ngày lập hóa đơn
       const paymentStatus = hoadon.trangthai || 'Chưa xác định';
 
 
