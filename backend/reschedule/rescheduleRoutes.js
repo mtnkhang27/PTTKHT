@@ -108,25 +108,53 @@ router.post('/check', async (req, res) => {
             where: {
                 chungchithi: phieuDuThi.lichthi.chungchi.idchungchi, // Same certificate
                 // Find schedules strictly in the future by comparing combined date and time as TIMESTAMP against NOW()
+                // Use LICH THI table name explicitly for clarity in literal
                 [Op.and]: sequelize.where(
-                    // Corrected: Use sequelize.literal with just column names for the main model
-                    sequelize.literal('"ngaythi" + "giothi"'),
+                    sequelize.literal('"lichthi"."ngaythi" + "lichthi"."giothi"'), // Assuming default table name 'LichThi' or adjust alias if needed
                     {
-                        [Op.gt]: sequelize.fn('NOW') // Compare TIMESTAMP > TIMESTAMP WITH TIME ZONE
+                        [Op.gt]: sequelize.fn('NOW') // Compare TIMESTAMP > CURRENT TIMESTAMP
                     }
                 )
             },
+            attributes: [
+                'idlichthi',
+                'ngaythi',
+                'giothi',
+                'diadiem',
+                // Select the count of associated PhieuDuThi entries
+                [sequelize.fn('COUNT', sequelize.col('phieuduthis.sobaodanh')), 'phieuDuThiCount'],
+                // Select the room capacity
+                [sequelize.col('phongthi.succhua'), 'roomCapacity'] // Select the capacity from the included PhongThi
+            ],
             include: [
                 {
                     model: PhongThi,
-                    as: 'phongthi',
-                    where: {
-                        sochotrong: { [Op.gt]: 0 } // Filter for rooms with available slots
-                    },
-                    attributes: [] // Don't need phongthi attributes in the main result
+                    as: 'phongthi', // Use the alias defined in associations
+                    attributes: [] // We selected 'phongthi.succhua' above, don't need other attributes here
+                },
+                {
+                    model: PhieuDuThi,
+                    // Assuming LichThi.hasMany(PhieuDuThi, { foreignKey: 'idlichthi' }) gives a default alias 'PhieuDuThis'
+                    // If you defined an 'as' for this association, use it here instead of 'PhieuDuThis'
+                    attributes: [], // Don't need PhieuDuThi attributes, just counting
+                    // Use a left join to include schedules with 0 PhieuDuThi entries
+                    required: false 
                 }
             ],
-            attributes: ['idlichthi', 'ngaythi', 'giothi', 'diadiem'],
+            group: [
+                'lichthi.idlichthi', // Group by the main model's primary key
+                'phongthi.idphong',  // Group by the included PhongThi's primary key
+                'lichthi.ngaythi',   // Include other selected LichThi attributes in group
+                'lichthi.giothi',
+                'lichthi.diadiem',
+                 'phongthi.succhua' // Include succhua as it's selected and used in having
+            ],
+            having: sequelize.where(
+                 sequelize.fn('COUNT', sequelize.col('phieuduthis.sobaodanh')), // Count of tickets
+                 {
+                     [Op.lt]: sequelize.col('phongthi.succhua') // is less than room capacity
+                 }
+            ),
             order: [['ngaythi', 'ASC'], ['giothi', 'ASC']] // Order by date and time
         });
 
