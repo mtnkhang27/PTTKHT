@@ -26,6 +26,7 @@ npm install
 ```sql
 CREATE DATABASE myapp;
 ```
+3.1 Vào file database.js sửa lại connection phù hợp (ví dụ: 'myapp {your_database}', 'postgres {'your_user'}, '1234 {your_password}') 
 
 4. Cập nhật thông tin kết nối database trong file `.env`
 
@@ -48,7 +49,7 @@ npm install
 
 3. Chạy ứng dụng:
 ```bash
-npm start
+npm run dev
 ```
 
 ## Cấu trúc dự án
@@ -73,5 +74,5 @@ code/
 
 ## Truy cập ứng dụng
 
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:5000 
+- Frontend: http://localhost:3458
+- Backend API: http://localhost:5173
