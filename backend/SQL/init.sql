@@ -207,7 +207,8 @@ select * from khachhang k;
 select * from phieudangky p; 
 select * from phieuduthi pdt;
 select * from chungchidangky c;
-select * from lichthi l 
+select * from lichthi l;
+
 
 update phieudangky set ngaydangky = '2024-05-05' where idphieudangky = 512;
 

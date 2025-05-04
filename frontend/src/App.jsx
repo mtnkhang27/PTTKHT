@@ -25,7 +25,7 @@ function App() {
             <Route path="/add-customer" element={<Customer />} />
             <Route path="/register" element={<Register />} />
             <Route path="/payment" element={<Payment />} />
-            <Route path="/extend-test" element={<ProtectedRoute><ExtendTest /></ProtectedRoute>} />
+            <Route path="/extend-test" element={<ExtendTest />} />
             <Route path="/certificate" element={<ProtectedRoute><Certificate /></ProtectedRoute>} />
             <Route path="/customer-search-register" element={<CustomerRegister/>} />
             {/* Add more routes as needed */}

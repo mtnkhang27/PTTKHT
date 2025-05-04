@@ -2,9 +2,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 import '../styles/Login.css'; 
 
 function Login() {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useAuth();
@@ -20,12 +22,27 @@ function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (username === 'admin' && password === 'admin') {
-      login({ username }); 
-    } else {
-      alert('Tên đăng nhập hoặc mật khẩu không đúng');
+  
+    try {
+      const response = await axios.post(`${apiUrl}/api/login/check-login`, {
+        username,
+        password
+      });
+  
+      const data = response.data;
+  
+      // Call your context's login method with returned user info
+      login({ username: data.nhanVien.name, id: data.nhanVien.id, type: data.nhanVien.type });
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(error.response.data.message);
+      } else {
+        console.error('Lỗi đăng nhập:', error);
+        alert('Đã xảy ra lỗi khi đăng nhập');
+      }
     }
   };
+  
 
   return (
     <div className="login-container">

@@ -20,6 +20,7 @@
   
     /* Optional: Set a background color if desired */
     background-color: #f9f9f9;
+    align-items: center; /* Center items vertically */
   }
   
   /* Style adjustments for the form elements for better spacing and appearance */
@@ -111,3 +112,54 @@
 .pay-btn:hover {
     background-color: #218838;
 }
+
+/* Styles for Radio Button Selection Area */
+.search-type-selection {
+  /* REMOVED text-align: center; */
+  /* Add some spacing below the radio buttons */
+  margin-bottom: 20px;
+}
+
+.search-type-selection label {
+  /* Makes labels appear side-by-side */
+  display: inline-block;
+  /* Adds horizontal space between the labels */
+  margin-right: 15px; /* Add space to the right of each label */
+  /* Makes the label text clickable */
+  cursor: pointer;
+  /* Optional: Adjust other label styles */
+  font-weight: normal;
+}
+
+/* Optional: Remove margin from the last label if needed */
+.search-type-selection label:last-child {
+  margin-right: 0;
+}
+
+.search-type-selection input[type="radio"] {
+  /* Adds a small space between the radio circle and its text */
+  margin-right: 5px;
+  /* Aligns the radio circle vertically with the label text */
+  vertical-align: middle;
+  /* Makes the radio button itself clickable */
+  cursor: pointer;
+}
+
+.table-container {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.table-container table {
+  min-width: 1000px; /* Adjust based on expected column count */
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table-container th,
+.table-container td {
+  white-space: nowrap;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+}
+

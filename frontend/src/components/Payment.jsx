@@ -1,13 +1,12 @@
 // components/Payment.jsx
 import React, { useState, useEffect } from 'react'; // Import useEffect
 import { useLocation } from 'react-router-dom'; // Import useLocation
-import '../styles/Payment.css';
+import '../styles/Payment.css'; // Ensure this CSS file is updated
 
 function Payment() {
   const apiUrl = import.meta.env.VITE_API_URL;
-  const location = useLocation(); // Get location object to access state
+  const location = useLocation();
 
-  // Initialize registrationId state from navigation state if available
   const [registrationId, setRegistrationId] = useState(location.state?.registrationId || '');
 
   const [paymentInfo, setPaymentInfo] = useState(null);
@@ -17,438 +16,534 @@ function Payment() {
   const [paymentMethod, setPaymentMethod] = useState('');
   const [invoiceCreated, setInvoiceCreated] = useState(false);
   const [invoiceDetails, setInvoiceDetails] = useState(null);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); // Added error state
+  const [successMessage, setSuccessMessage] = useState(null); // Added success state
 
-  // Effect to automatically check payment info if registrationId is received via state
+ 
   useEffect(() => {
-    // if (registrationId && !paymentInfo) { // Only check if ID exists and info hasn't been loaded yet
+    // Optional: Auto-check if needed, commented out as per original
+    // if (registrationId && !paymentInfo) {
     //   handleCheckPayment();
     // }
   }, [registrationId, paymentInfo]); // Depend on registrationId and paymentInfo
 
+  // --- Handler Functions (handleDownloadInvoice, handleCheckPayment, etc.) remain the same ---
+  // ... (Keep all your existing handler functions here: handleDownloadInvoice, handleCheckPayment, handleCreateInvoice, handleCreateInvoiceIndividual, handlePayment) ...
+  // --- Make sure to update alert calls to maybe use setError or setSuccessMessage if you prefer inline messages over alerts ---
+  // Example change in handleCheckPayment error handling:
+  // ... catch block in handleCheckPayment
+  // } catch (err) {
+  //   console.error('Error during payment check:', err);
+  //   setError('Lỗi khi kiểm tra thanh toán. Vui lòng thử lại.'); // Use setError state
+  //   // Reset other states
+  //   setPaymentInfo(null);
+  //   setIsUnit(false);
+  //   // ... reset other states ...
+  // }
 
-  const handleDownloadInvoice = async () => {
+    const handleDownloadInvoice = async () => {
     // Check if invoiceDetails and mahoadon exist before attempting download
     if (!invoiceDetails || !invoiceDetails.mahoadon) {
-        alert('Không có thông tin hóa đơn để tải.');
+        // Use setError or an alert
+        setError('Không có thông tin hóa đơn để tải.');
+        // alert('Không có thông tin hóa đơn để tải.');
         return;
     }
+    setError(null); // Clear previous errors
 
     try {
-      // Note: The previous code was sending paymentMethod and totalAmount in the body
-      // for the download endpoint, which is unusual for a GET or typically POST download.
-      // A POST download usually just needs the identifier (mahoadon). Let's simplify
-      // the request based on the endpoint path suggesting it only needs mahoadon.
-      // If your backend *truly* needs paymentMethod/totalAmount for download,
-      // keep the body, but verify the HTTP method. Assuming POST with just ID for now.
-
       const response = await fetch(`${apiUrl}/api/payment/download-invoice/${invoiceDetails.mahoadon}`, {
-        method: 'GET', // Or GET if your backend supports it
-        headers: { 'Content-Type': 'application/json' },
-        // body: JSON.stringify({ // Keep this if your backend needs it
-        //   paymentMethod, // This might not be necessary for a download
-        //   totalAmount: isUnit
-        //     ? unitPaymentDetails?.finalFee
-        //     : paymentInfo?.feePerCandidate,
-        // }),
+        method: 'GET', // Assuming GET is appropriate, adjust if needed
+        headers: {
+            // Add any necessary headers like Authorization if required
+        },
       });
 
       if (!response.ok) {
-        // If the response is JSON with an error message
-        if (response.headers.get('Content-Type')?.includes('application/json')) {
-           const errorData = await response.json();
-           alert(errorData.error || 'Lỗi khi tải hóa đơn');
-        } else {
-           // If the response is not JSON (e.g., plain text error)
-           const errorText = await response.text();
-           alert(`Lỗi khi tải hóa đơn: ${response.status} ${response.statusText} - ${errorText}`);
+        let errorMsg = `Lỗi ${response.status}: ${response.statusText}`;
+        try {
+            const errorData = await response.json();
+            errorMsg = errorData.error || errorMsg;
+        } catch (jsonError) {
+            // If the response isn't JSON, try getting text
+            try {
+                const errorText = await response.text();
+                if (errorText) errorMsg += ` - ${errorText}`;
+            } catch (textError) {
+                // Ignore if text cannot be read
+            }
         }
+        setError(`Lỗi khi tải hóa đơn. ${errorMsg}`);
+        // alert(`Lỗi khi tải hóa đơn. ${errorMsg}`);
         return;
       }
 
-      // Assuming the backend sends the PDF file directly in the response body
-      // This is the standard way to handle file downloads from a fetch request.
       const blob = await response.blob();
-      const fileUrl = URL.createObjectURL(blob); // Create a local URL for the blob
+      // Check if the blob type indicates an error (e.g., application/json instead of application/pdf)
+      if (blob.type.includes('application/json')) {
+          const errorText = await blob.text();
+          let errorData = {};
+          try {
+              errorData = JSON.parse(errorText);
+          } catch(e) {/* Ignore parse error */}
+          setError(errorData.error || 'Lỗi khi tải hóa đơn: Backend trả về thông tin lỗi thay vì file.');
+          // alert(errorData.error || 'Lỗi khi tải hóa đơn: Backend trả về thông tin lỗi thay vì file.');
+          return;
+      } else if (!blob.type.includes('application/pdf')) {
+          // Optional: Warn if the type is not PDF, but proceed anyway
+          console.warn(`Received unexpected content type: ${blob.type}`);
+      }
 
-      // Create link and trigger download
+
+      const fileUrl = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = fileUrl;
-      // Suggest a filename. You might get the filename from response headers (Content-Disposition)
-      // or construct it based on the mahoadon. Using mahoadon here.
-      a.download = `${invoiceDetails.mahoadon}.pdf`;
+      a.download = `${invoiceDetails.mahoadon}.pdf`; // Suggest filename
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-
-      // Clean up the object URL
       URL.revokeObjectURL(fileUrl);
+      setSuccessMessage('Đã bắt đầu tải hóa đơn.'); // Optional success feedback
 
     } catch (err) {
-      console.error('Error during invoice download:', err); // Log the error
-      alert('Lỗi khi tải hóa đơn. Vui lòng thử lại.');
+      console.error('Error during invoice download:', err);
+      setError('Lỗi kết nối khi tải hóa đơn. Vui lòng thử lại.');
+    //   alert('Lỗi kết nối khi tải hóa đơn. Vui lòng thử lại.');
     }
   };
 
   const handleCheckPayment = async () => {
      // Basic client-side validation
      if (!registrationId) {
-         alert('Vui lòng nhập mã phiếu đăng ký.');
+         setError('Vui lòng nhập mã phiếu đăng ký.'); // Use setError
+         // alert('Vui lòng nhập mã phiếu đăng ký.');
          return;
      }
-    try {
-      const response = await fetch(`${apiUrl}/api/payment/check/${registrationId}`);
-      const data = await response.json();
+     // Clear previous state before fetching
+     setError(null);
+     setSuccessMessage(null);
+     setPaymentInfo(null);
+     setIsUnit(false);
+     setUnitPaymentDetails(null);
+     setPaymentMethod('');
+     setInvoiceCreated(false);
+     setInvoiceDetails(null);
+     setPaymentStatus('');
 
-      if (response.ok) {
-        setPaymentInfo(data);
-        setIsUnit(data.isUnit || false);
-        setPaymentMethod('');
-        setInvoiceCreated(false); // Reset invoice state on new check
-        setInvoiceDetails(null);   // Reset invoice state on new check
-        setPaymentStatus('');      // Reset payment status on new check
+     try {
+       const response = await fetch(`${apiUrl}/api/payment/check/${registrationId}`);
+       const data = await response.json();
 
-        if (data.isUnit) {
-          setUnitPaymentDetails({
-            totalFee: data.totalFee,
-            discount: data.discount,
-            finalFee: data.finalFee,
-          });
-        } else {
-            // For non-unit payments, if a fee is present, maybe default method or prepare for direct payment?
-            // Depending on your payment flow for non-units.
-            // For now, just setting the fee info is enough.
+       if (response.ok) {
+         setPaymentInfo(data);
+         setIsUnit(data.isUnit || false);
+         // Reset dependent states
+         setPaymentMethod('');
+         setInvoiceCreated(false);
+         setInvoiceDetails(null);
+         setPaymentStatus('');
+
+         if (data.isUnit) {
+           setUnitPaymentDetails({
+             totalFee: data.totalFee,
+             discount: data.discount,
+             finalFee: data.finalFee,
+           });
+         }
+         // No specific action needed for non-unit here unless defaulting payment method etc.
+
+       } else {
+         // Handle error response using setError
+         setError(data.error || 'Không tìm thấy thông tin thanh toán hoặc đã có lỗi xảy ra.');
+         // Clear potentially partially set info
+         setPaymentInfo(null);
+         setIsUnit(false);
+         setUnitPaymentDetails(null);
+       }
+     } catch (err) {
+       console.error('Error during payment check:', err);
+       setError('Lỗi kết nối khi kiểm tra thanh toán. Vui lòng thử lại.');
+       // Ensure state is cleared on network error
+       setPaymentInfo(null);
+       setIsUnit(false);
+       setUnitPaymentDetails(null);
+     }
+   };
+
+    const handleCreateInvoice = async () => {
+        setError(null); // Clear previous errors
+        setSuccessMessage(null);
+
+        if (!paymentMethod) {
+            setError('Vui lòng chọn hình thức thanh toán');
+            // alert('Vui lòng chọn hình thức thanh toán');
+            return;
         }
-      } else {
-        // Handle error response
-        alert(data.error || 'Không tìm thấy thông tin thanh toán hoặc đã có lỗi xảy ra.');
-        setPaymentInfo(null); // Clear previous info on error
-        setIsUnit(false);
-        setUnitPaymentDetails(null);
-        setPaymentMethod('');
-        setInvoiceCreated(false);
-        setInvoiceDetails(null);
-        setPaymentStatus('');
-      }
-    } catch (err) {
-      console.error('Error during payment check:', err); // Log the error
-      alert('Lỗi khi kiểm tra thanh toán. Vui lòng thử lại.');
-      setPaymentInfo(null); // Clear previous info on error
-      setIsUnit(false);
-      setUnitPaymentDetails(null);
-      setPaymentMethod('');
-      setInvoiceCreated(false);
-      setInvoiceDetails(null);
-      setPaymentStatus('');
-    }
-  };
 
-  const handleCreateInvoice = async () => {
-    if (!paymentMethod) {
-      alert('Vui lòng chọn hình thức thanh toán');
-      return;
-    }
+        if (!paymentInfo) {
+            setError('Vui lòng kiểm tra thông tin thanh toán trước khi lập hóa đơn.');
+            // alert('Vui lòng kiểm tra thông tin thanh toán trước khi lập hóa đơn.');
+            return;
+        }
 
-    // Ensure paymentInfo is loaded and contains necessary fee details
-    if (!paymentInfo) {
-         alert('Vui lòng kiểm tra thông tin thanh toán trước khi lập hóa đơn.');
-         return;
-    }
+        // Determine total amount based on isUnit
+        const totalAmount = isUnit
+            ? unitPaymentDetails?.finalFee
+            : paymentInfo?.lephithiList?.[0]?.feePerCandidate; // Correctly access fee for non-unit
 
-    const totalAmount = isUnit
-      ? unitPaymentDetails?.finalFee
-      : paymentInfo?.lephithiList?.[0]; // Assuming the first fee in the list is the relevant one for non-unit case
-
-    if (totalAmount === undefined || totalAmount === null) {
-         alert('Không xác định được tổng tiền để lập hóa đơn.');
-         return;
-    }
+        // Validate totalAmount more robustly
+        if (typeof totalAmount !== 'number' || totalAmount < 0) {
+            console.error("Invalid total amount:", totalAmount, "isUnit:", isUnit, "Details:", unitPaymentDetails, "Info:", paymentInfo);
+            setError('Không xác định được tổng tiền hợp lệ để lập hóa đơn.');
+            // alert('Không xác định được tổng tiền hợp lệ để lập hóa đơn.');
+            return;
+        }
 
 
-    try {
-      const response = await fetch(`${apiUrl}/api/payment/create-invoice/${registrationId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          paymentMethod,
-          registrationId, // Redundant in path, but harmless to send
-          totalAmount: totalAmount, // Use the determined total amount
-        }),
-      });
+        try {
+            const response = await fetch(`${apiUrl}/api/payment/create-invoice/${registrationId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    paymentMethod,
+                    // registrationId, // Often redundant if in URL, but harmless
+                    totalAmount: totalAmount,
+                }),
+            });
 
-      const data = await response.json();
-      if (response.ok) {
-        setInvoiceCreated(true);
-        setInvoiceDetails(data.invoice);
-        alert('Hóa đơn đã được lập thành công.'); // Inform the user
-        // console.log(data.invoice); // Keep for debugging if needed
-      } else {
-        alert(data.error || 'Không thể lập hóa đơn');
-      }
-    } catch (err) {
-      console.error('Error during invoice creation:', err); // Log the error
-      alert('Lỗi khi lập hóa đơn. Vui lòng thử lại.');
-    }
-  };
+            const data = await response.json();
+            if (response.ok) {
+                setInvoiceCreated(true);
+                setInvoiceDetails(data.invoice);
+                setSuccessMessage('Hóa đơn đã được lập thành công.'); // Use success message state
+                // alert('Hóa đơn đã được lập thành công.');
+            } else {
+                setError(data.error || 'Không thể lập hóa đơn');
+                // alert(data.error || 'Không thể lập hóa đơn');
+            }
+        } catch (err) {
+            console.error('Error during invoice creation:', err);
+            setError('Lỗi kết nối khi lập hóa đơn. Vui lòng thử lại.');
+            // alert('Lỗi kết nối khi lập hóa đơn. Vui lòng thử lại.');
+        }
+    };
 
-  const handleCreateInvoiceIndividual = async () => {
-    const totalAmount = isUnit
-      ? unitPaymentDetails?.finalFee
-      : paymentInfo?.lephithiList?.[0]; // Assuming the first fee in the list is the relevant one for non-unit case
+     const handleCreateInvoiceIndividual = async () => {
+        setError(null); // Clear previous errors
+        setSuccessMessage(null);
 
-    if (totalAmount === undefined || totalAmount === null) {
-         alert('Không xác định được tổng tiền để lập hóa đơn.');
-         return;
-    }
+        if (!paymentInfo) {
+            setError('Vui lòng kiểm tra thông tin thanh toán trước khi lập hóa đơn.');
+            // alert('Vui lòng kiểm tra thông tin thanh toán trước khi lập hóa đơn.');
+            return;
+        }
+
+        // Correctly access fee for non-unit/individual case
+        const totalAmount = paymentInfo?.lephithiList?.[0]?.feePerCandidate;
+
+        if (typeof totalAmount !== 'number' || totalAmount < 0) {
+             console.error("Invalid total amount for individual:", totalAmount, "Info:", paymentInfo);
+             setError('Không xác định được tổng tiền hợp lệ để lập hóa đơn.');
+            // alert('Không xác định được tổng tiền hợp lệ để lập hóa đơn.');
+            return;
+        }
+
+        try {
+             // Use 'transfer' as the default method for individual, or make it selectable if needed
+            const fixedPaymentMethod = 'transfer';
+
+            const response = await fetch(`${apiUrl}/api/payment/create-invoice/${registrationId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    paymentMethod: fixedPaymentMethod,
+                    totalAmount: totalAmount,
+                }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                setInvoiceCreated(true);
+                setInvoiceDetails(data.invoice);
+                setPaymentMethod(fixedPaymentMethod); // Set the payment method state as well
+                setSuccessMessage('Hóa đơn đã được lập thành công.'); // Use success message state
+                // alert('Hóa đơn đã được lập thành công.');
+            } else {
+                setError(data.error || 'Không thể lập hóa đơn');
+                // alert(data.error || 'Không thể lập hóa đơn');
+            }
+        } catch (err) {
+            console.error('Error during individual invoice creation:', err);
+            setError('Lỗi kết nối khi lập hóa đơn. Vui lòng thử lại.');
+            // alert('Lỗi kết nối khi lập hóa đơn. Vui lòng thử lại.');
+        }
+    };
+
+    const handlePayment = async () => {
+        setError(null); // Clear previous errors
+        setSuccessMessage(null);
+
+        if (!paymentInfo) {
+            setError('Vui lòng kiểm tra thông tin thanh toán trước khi xác nhận.');
+            // alert('Vui lòng kiểm tra thông tin thanh toán trước khi xác nhận.');
+            return;
+        }
+
+        // Check if invoice is required and created
+        // For individual ('transfer' method implicitly requires invoice now)
+        // For unit (requires selection and invoice creation)
+        if (!invoiceCreated) {
+             setError('Vui lòng lập hóa đơn trước khi xác nhận thanh toán.');
+            //  alert('Vui lòng lập hóa đơn trước khi xác nhận thanh toán.');
+             return;
+        }
+
+        // For unit payments, ensure a method was selected *before* invoice creation.
+        // For individual, 'transfer' is assumed. Check paymentMethod state.
+        if (!paymentMethod) {
+             setError('Hình thức thanh toán chưa được xác định.');
+            //  alert('Hình thức thanh toán chưa được xác định.');
+             return;
+        }
+
+        // Prevent confirming if already paid
+        if (paymentInfo.status === 'Paid') {
+            setError('Phiếu đăng ký này đã được thanh toán.');
+            // alert('Phiếu đăng ký này đã được thanh toán.');
+            return;
+        }
 
 
-    try {
-      const response = await fetch(`${apiUrl}/api/payment/create-invoice/${registrationId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          paymentMethod : 'transfer', // Assuming this is the method for individual invoices
-          registrationId, // Redundant in path, but harmless to send
-          totalAmount: totalAmount, // Use the determined total amount
-        }),
-      });
+        try {
+            const response = await fetch(`${apiUrl}/api/payment/confirm/${registrationId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                // Confirm endpoint might not need the method if it's stored with the invoice
+                // Send it just in case, or remove if backend doesn't use it
+                body: JSON.stringify({ method: paymentMethod }),
+            });
 
-      const data = await response.json();
-      if (response.ok) {
-        setInvoiceCreated(true);
-        setInvoiceDetails(data.invoice);
-        alert('Hóa đơn đã được lập thành công.'); // Inform the user
-        // console.log(data.invoice); // Keep for debugging if needed
-      } else {
-        alert(data.error || 'Không thể lập hóa đơn');
-      }
-    } catch (err) {
-      console.error('Error during invoice creation:', err); // Log the error
-      alert('Lỗi khi lập hóa đơn. Vui lòng thử lại.');
-    }
-  };
+            const data = await response.json();
 
+            if (response.ok) {
+                setPaymentStatus(data.message || 'Thanh toán thành công'); // Update status message
+                setSuccessMessage(data.message || 'Thanh toán thành công!'); // Use success state for feedback
+                // alert(data.message || 'Thanh toán thành công!');
+                // Optionally update paymentInfo state to reflect 'Paid' status
+                setPaymentInfo(prev => prev ? { ...prev, status: 'Paid' } : null);
+                // Optionally clear/reset form after success?
+                // setRegistrationId(''); setPaymentInfo(null); ... etc.
+            } else {
+                setError(data.error || 'Đã xảy ra lỗi khi xác nhận thanh toán.');
+                // alert(data.error || 'Đã xảy ra lỗi khi xác nhận thanh toán.');
+                setPaymentStatus(''); // Clear status on error
+            }
+        } catch (err) {
+            console.error('Error during payment confirmation:', err);
+            setError('Lỗi kết nối khi xác nhận thanh toán. Vui lòng thử lại.');
+            // alert('Lỗi kết nối khi xác nhận thanh toán. Vui lòng thử lại.');
+            setPaymentStatus(''); // Clear status on error
+        }
+    };
 
-  const handlePayment = async () => {
-      // Ensure paymentInfo is loaded
-      if (!paymentInfo) {
-         alert('Vui lòng kiểm tra thông tin thanh toán trước khi xác nhận.');
-         return;
-      }
-
-      // Check if invoice is needed and created for unit cases
-      if (isUnit && !invoiceCreated) {
-          alert('Vui lòng lập hóa đơn trước khi xác nhận thanh toán cho đơn vị.');
-          return;
-      }
-
-      // Check if payment method is selected (needed for invoice creation too, but good to double check)
-      if (isUnit && !paymentMethod) { // Assuming payment method is primarily needed for unit/invoice flow
-           alert('Vui lòng chọn hình thức thanh toán.');
-           return;
-      }
-
-
-    try {
-      const response = await fetch(`${apiUrl}/api/payment/confirm/${registrationId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        // Assuming the confirm endpoint *might* need the method, but maybe not always.
-        // Only send if paymentMethod is selected/relevant.
-        body: JSON.stringify({ method: paymentMethod || undefined }), // Send method if available
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setPaymentStatus(data.message || 'Thanh toán thành công');
-        alert(data.message || 'Thanh toán thành công!'); // Show alert
-        // Optionally reset state or redirect after successful payment
-        // setRegistrationId('');
-        // setPaymentInfo(null);
-        // ... etc ...
-      } else {
-        alert(data.error || 'Đã xảy ra lỗi khi xác nhận thanh toán.');
-        setPaymentStatus(''); // Clear status on error
-      }
-    } catch (err) {
-      console.error('Error during payment confirmation:', err); // Log the error
-      alert('Lỗi khi xác nhận thanh toán. Vui lòng thử lại.');
-      setPaymentStatus(''); // Clear status on error
-    }
-  };
 
   // Helper function to format currency
   const formatCurrency = (amount) => {
-      if (amount === undefined || amount === null) return 'N/A';
-      return `${parseInt(amount).toLocaleString('vi-VN')} VNĐ`;
-  }
+    if (typeof amount !== 'number' || isNaN(amount)) return 'N/A'; // More robust check
+    return `${amount.toLocaleString('vi-VN')} VNĐ`;
+  };
 
   return (
     <div className="payment-container">
       <h1 className="payment-title">Thanh Toán và Phiếu Dự Thi</h1>
 
+      {/* --- Input Area --- */}
+      {/* Add margin-bottom in CSS */}
       <div className="payment-input-area">
         <input
           placeholder="Nhập mã phiếu đăng ký"
           value={registrationId}
           onChange={(e) => setRegistrationId(e.target.value)}
           className="payment-input"
-          // Disable input if paymentInfo is already loaded (prevents changing ID mid-process)
+          // Disable input if paymentInfo is loaded to prevent changing mid-process
           disabled={!!paymentInfo}
         />
-        <button
-          onClick={handleCheckPayment}
-          className="payment-button"
-          // Disable check button if input is empty or paymentInfo is already loaded
-          disabled={!registrationId || !!paymentInfo}
-        >
+        {/* Button Group: Use flex and gap in CSS for spacing */}
+        <div className="payment-input-buttons">
+          <button
+            onClick={handleCheckPayment}
+            className="payment-button"
+            // Disable check button if input is empty or paymentInfo is loaded
+            disabled={!registrationId || !!paymentInfo}
+          >
             Kiểm tra
-        </button>
-         {/* Option to clear and start over if paymentInfo is loaded */}
-        {paymentInfo && (
-             <button
-                 onClick={() => {
-                     setRegistrationId('');
-                     setPaymentInfo(null);
-                     setIsUnit(false);
-                     setUnitPaymentDetails(null);
-                     setPaymentMethod('');
-                     setInvoiceCreated(false);
-                     setInvoiceDetails(null);
-                     setPaymentStatus('');
-                     setError(null); // Clear any previous errors
-                     setSuccessMessage(null); // Clear any previous messages
-                 }}
-                 className="payment-button secondary-button" // Use a secondary style for clarity
-             >
-                 Nhập mã khác
-             </button>
-        )}
-      </div>
-
-       {/* Display general messages (Error, Success Status) */}
-       {/* Reusing message classes from ExtendTest CSS if available */}
-       {paymentStatus && (
-            <div className="payment-message-area"> {/* New container for messages */}
-                 <p className={paymentStatus.includes('thành công') ? 'success-message' : 'info-message'}>
-                    {paymentStatus}
-                 </p>
-             </div>
-       )}
-        {error && ( // Assuming you might want a general error state in Payment too
-            <div className="payment-message-area">
-                <p className="error-message">{error}</p>
-            </div>
-        )}
-
-
-      {paymentInfo && (
-        <div className="payment-info-section"> {/* New container for payment info details */}
-          <h2 className="payment-info-title">Thông tin thanh toán</h2> {/* Reusing title class */}
-          <p><strong>Mã phiếu:</strong> {paymentInfo.id}</p>
-          <p><strong>Trạng thái:</strong> {paymentInfo.status}</p>
-
-          {/* Display fee details - adjusted based on isUnit */}
-          {/* {!isUnit && paymentInfo.lephithiList?.length > 0 && (
-             <p><strong>Phí thanh toán:</strong> {formatCurrency(paymentInfo.lephithiList[0])}</p>
-          )} */}
-         {!isUnit && paymentInfo.lephithiList?.length > 0 && (
-             <p><strong>Phí thanh toán:</strong> {formatCurrency(paymentInfo.lephithiList[0].feePerCandidate)}</p>
-          )}
-
-          {isUnit && unitPaymentDetails ? (
-            <div className="unit-details-section"> {/* New container for unit details */}
-              <h3 className="unit-details-title">Ưu đãi đơn vị</h3>
-              <p>Tổng phí: {formatCurrency(unitPaymentDetails.totalFee)}</p>
-              <p>Giảm giá: {formatCurrency(unitPaymentDetails.discount)}</p>
-              <p><strong>Phí cuối cùng: {formatCurrency(unitPaymentDetails.finalFee)}</strong></p>
-
-              <div className="payment-method-group"> {/* New container for payment method select */}
-                <label htmlFor="paymentMethod"><strong>Hình thức thanh toán:</strong></label>
-                <select
-                  id="paymentMethod"
-                  value={paymentMethod}
-                  onChange={(e) => setPaymentMethod(e.target.value)}
-                  className="payment-select"
-                  disabled={invoiceCreated} // Disable method selection after invoice created
-                >
-                  <option value="">-- Chọn hình thức --</option>
-                  <option value="cash">Tiền mặt</option>
-                  <option value="transfer">Chuyển khoản</option>
-                </select>
-              </div>
-
-              {!invoiceCreated && (
-                <button
-                  onClick={handleCreateInvoice}
-                  className="payment-button create-invoice-button" // Specific class for styling
-                  disabled={!paymentMethod} // Disable if method not selected
-                >
-                  Lập hóa đơn
-                </button>
-              )}
-            </div>
-          ) : (
-              // Display list of fees even if not unit (if needed)
-               paymentInfo.lephithiList?.length > 0 && (
-                   <div className="individual-fees-list"> {/* New container for individual fees */}
-                       <h3>Chi tiết phí:</h3>
-                       <ul>
-                         {paymentInfo.lephithiList.map((fee, index) => (
-                           // Ensure fee is treated as number for formatting
-                           console.log(fee),
-                           <li key={index}>Chứng chỉ {fee.tenchungchi}: {formatCurrency(fee.subtotal)}</li>
-                         ))}
-                       </ul>
-                       <button
-                        onClick={handleCreateInvoiceIndividual}
-                        className="payment-button create-invoice-button" // Specific class for styling
-                      >
-                        Lập hóa đơn
-                      </button>
-                   </div>
-               )
-          )}
-
-
-          {invoiceCreated && invoiceDetails && (
-            <div className="invoice-info-section"> {/* New container for invoice info */}
-              <h3 className="invoice-info-title">Thông tin hóa đơn</h3>
-              <p>Mã hóa đơn: <strong>{invoiceDetails.mahoadon}</strong></p>
-              <button
-                onClick={handleDownloadInvoice}
-                className="payment-button download-invoice-button" // Specific class for styling
-              >
-                 Xem / Tải hóa đơn (PDF)
-              </button>
-            </div>
-          )}
-
-          {/* Confirm Payment Button */}
-          {/* Enabled if paymentInfo is loaded and (either not unit OR (unit AND invoice created)) */}
-          {paymentInfo && (!isUnit || (isUnit && invoiceCreated)) && (
+          </button>
+          {/* Option to clear and start over */}
+          {paymentInfo && (
             <button
-              onClick={handlePayment}
-              className="payment-button confirm-payment-button" // Specific class
-              // Add additional disable logic if needed, e.g., requiring fee info exists
-              disabled={!paymentInfo.status || paymentInfo.status === 'Paid'} // Example: Disable if status is Paid
+              onClick={() => {
+                setRegistrationId('');
+                setPaymentInfo(null);
+                setIsUnit(false);
+                setUnitPaymentDetails(null);
+                setPaymentMethod('');
+                setInvoiceCreated(false);
+                setInvoiceDetails(null);
+                setPaymentStatus('');
+                setError(null); // Clear errors
+                setSuccessMessage(null); // Clear success messages
+              }}
+              className="payment-button secondary-button" // Style differently
             >
-              Xác nhận thanh toán
+              Nhập mã khác
             </button>
           )}
-
         </div>
+      </div>
+
+      {/* --- Message Area --- */}
+      {/* Use margin-top/bottom in CSS for spacing */}
+      <div className="payment-message-area">
+         {error && <p className="error-message">{error}</p>}
+         {successMessage && <p className="success-message">{successMessage}</p>}
+         {/* Display payment status if it's not indicating success/error already handled */}
+         {paymentStatus && !successMessage && !error && (
+             <p className="info-message">{paymentStatus}</p>
+         )}
+         {/* Initial instruction */}
+         {!paymentInfo && !location.state?.registrationId && !error && !successMessage && (
+           <p className="info-message">Vui lòng nhập mã phiếu đăng ký để kiểm tra thông tin thanh toán.</p>
+         )}
+      </div>
+
+
+      {/* --- Payment Details Section (only when info is loaded) --- */}
+      {paymentInfo && (
+        // Add margin-top in CSS for spacing from input/message area
+        <div className="payment-info-section">
+          <h2 className="payment-info-title">Thông tin thanh toán</h2>
+
+          {/* Basic Info */}
+          {/* Add margin-bottom in CSS */}
+          <div className="payment-basic-info">
+            <p><strong>Mã phiếu:</strong> {paymentInfo.id}</p>
+            <p><strong>Trạng thái:</strong> {paymentInfo.status}</p>
+          </div>
+
+          {/* Fee Details (Unit or Individual) */}
+          {/* Add margin-top/bottom in CSS */}
+          <div className="payment-fee-details">
+            {isUnit && unitPaymentDetails ? (
+              // Unit Specific Details
+              <div className="unit-details-section">
+                <h3 className="unit-details-title">Chi tiết phí (Đơn vị)</h3>
+                <p>Tổng phí gốc: {formatCurrency(unitPaymentDetails.totalFee)}</p>
+                <p>Giảm giá: {formatCurrency(unitPaymentDetails.discount)}</p>
+                <p><strong>Phí cuối cùng: {formatCurrency(unitPaymentDetails.finalFee)}</strong></p>
+
+                {/* Payment Method Selection for Unit */}
+                {/* Add margin-top/bottom in CSS */}
+                <div className="payment-method-group">
+                  <label htmlFor="paymentMethod"><strong>Hình thức thanh toán:</strong></label>
+                  <select
+                    id="paymentMethod"
+                    value={paymentMethod}
+                    onChange={(e) => setPaymentMethod(e.target.value)}
+                    className="payment-select"
+                    // Disable method selection after invoice is created or if already paid
+                    disabled={invoiceCreated || paymentInfo.status === 'Paid'}
+                  >
+                    <option value="">-- Chọn hình thức --</option>
+                    <option value="cash">Tiền mặt</option>
+                    <option value="transfer">Chuyển khoản</option>
+                  </select>
+                </div>
+              </div>
+            ) : (
+               // Individual Specific Details (or non-unit)
+               paymentInfo.lephithiList?.length > 0 && (
+                <div className="individual-fees-list">
+                    <h3 className='individual-details-title'>Chi tiết phí (Cá nhân)</h3>
+                    {/* Display total fee first */}
+                    <p><strong>Phí thanh toán:</strong> {formatCurrency(paymentInfo.lephithiList[0].feePerCandidate)}</p>
+                    {/* Optional: Display breakdown if needed */}
+                    {/* <ul>
+                        {paymentInfo.lephithiList.map((feeItem, index) => (
+                        <li key={index}>
+                            {feeItem.tenchungchi || `Phí ${index + 1}`}: {formatCurrency(feeItem.subtotal || feeItem.feePerCandidate)}
+                        </li>
+                        ))}
+                    </ul> */}
+                </div>
+              )
+            )}
+          </div>
+
+          {/* Invoice Info (shown after creation) */}
+          {/* Add margin-top/bottom in CSS */}
+          {invoiceCreated && invoiceDetails && (
+            <div className="invoice-info-section">
+              <h3 className="invoice-info-title">Thông tin hóa đơn</h3>
+              <p>Mã hóa đơn: <strong>{invoiceDetails.mahoadon}</strong></p>
+              {/* Moved download button to actions area below */}
+            </div>
+          )}
+
+          {/* --- Action Buttons Area --- */}
+          {/* Add margin-top in CSS for spacing */}
+          <div className="payment-actions-area">
+            {/* Create Invoice Button (Conditional) */}
+             {!invoiceCreated && paymentInfo.status !== 'Paid' && (
+                <>
+                 {isUnit && (
+                    <button
+                    onClick={handleCreateInvoice}
+                    className="payment-button create-invoice-button"
+                    disabled={!paymentMethod || !unitPaymentDetails} // Ensure method selected and details loaded
+                    >
+                    Lập hóa đơn (Đơn vị)
+                    </button>
+                 )}
+                 {!isUnit && paymentInfo.lephithiList?.length > 0 && (
+                    <button
+                        onClick={handleCreateInvoiceIndividual}
+                        className="payment-button create-invoice-button"
+                        // Disabled if fee is not valid number
+                        disabled={typeof paymentInfo.lephithiList[0]?.feePerCandidate !== 'number'}
+                    >
+                        Lập hóa đơn (Cá nhân - CK)
+                    </button>
+                 )}
+                </>
+             )}
+
+
+            {/* Download Invoice Button (Conditional) */}
+            {invoiceCreated && invoiceDetails && (
+              <button
+                onClick={handleDownloadInvoice}
+                className="payment-button download-invoice-button"
+              >
+                Xem / Tải hóa đơn (PDF)
+              </button>
+            )}
+
+            {/* Confirm Payment Button (Conditional) */}
+            {/* Show if invoice is created (implicitly required now for both types) and not yet paid */}
+            {invoiceCreated && paymentInfo.status !== 'Paid' && (
+              <button
+                onClick={handlePayment}
+                className="payment-button confirm-payment-button"
+              >
+                Xác nhận thanh toán
+              </button>
+            )}
+          </div>
+
+        </div> // End payment-info-section
       )}
 
-        {/* Message when paymentInfo is null and not loading */}
-       {!paymentInfo && !location.state?.registrationId && (
-           <div className="payment-message-area">
-               <p className="info-message">Vui lòng nhập mã phiếu đăng ký để kiểm tra thông tin thanh toán.</p>
-           </div>
-       )}
-
-    </div>
+    </div> // End payment-container
   );
 }
 

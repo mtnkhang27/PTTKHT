@@ -47,14 +47,13 @@ INSERT INTO phieudangky (idphieudangky, idkhachhang, nhanvientiepnhan, ngaydangk
 
 -- Mock data for LichThi
 INSERT INTO lichthi (idlichthi, ngaythi, giothi, diadiem, idphong, nhanviencoithi, chungchithi) VALUES
-(601, '2025-04-20', '08:00:00', 'Phong 301, 123 Le Loi', 301, 103, 201),
-(602, '2025-04-20', '14:00:00', 'Phong 302, 123 Le Loi', 302, 103, 202),
-(603, '2025-04-25', '09:00:00', 'Phong 303, 456 Nguyen Trai', 303, 103, 203),
-(604, '2025-04-25', '15:00:00', 'Phong 304, 456 Nguyen Trai', 304, 103, 204),
-(605, '2025-04-27', '10:00:00', 'Phong 305, 789 Hai Ba Trung', 305, 103, 205);
-(606, '2025-05-10', '10:00:00', 'Phong 305, 789 Hai Ba Trung', 305, 103, 205);
+(601, '2025-05-20', '08:00:00', 'Phong 301, 123 Le Loi', 301, 103, 201),
+(602, '2025-05-20', '14:00:00', 'Phong 302, 123 Le Loi', 302, 103, 202),
+(603, '2025-05-25', '09:00:00', 'Phong 303, 456 Nguyen Trai', 303, 103, 203),
+(604, '2025-05-25', '15:00:00', 'Phong 304, 456 Nguyen Trai', 304, 103, 204),
+(605, '2025-05-27', '10:00:00', 'Phong 305, 789 Hai Ba Trung', 305, 103, 205),
+(606, '2025-05-10', '10:00:00', 'Phong 305, 789 Hai Ba Trung', 305, 103, 205),
 (607, '2025-06-10', '10:00:00', 'Phong 305, 789 Hai Ba Trung', 305, 103, 205);
-
 
 -- Mock data for PhieuGiaHan
 INSERT INTO phieugiahan (idphieudangky, ngaygiahan, nhanviengiahan, lichthimoi, phigiahan, trangthaithanhtoan) VALUES
@@ -86,7 +85,7 @@ INSERT INTO phieuduthi (sobaodanh, idphieudangky, idlichthi, iddonvi, nhanviengh
 (802, 502, 602, 402, 104, 'Khong dat', 45.0, NULL, false, '1999-11-20', 'Tran Thi B'),
 (803, 503, 603, 401, 104, 'Dat', 85.2, '2025-05-15', true, '2001-07-01', 'Le Hoang C'),
 (804, 504, 601, 403, 104, 'Dat', 60.0, NULL, false, '2002-05-10', 'Pham Ngoc D'),
-INSERT INTO phieuduthi (sobaodanh, idphieudangky, idlichthi, iddonvi, nhanvienghinhandiem, ketquathi, diemsothi, thoigiannhanchungchi, xacnhannhanchungchi, ngaysinhts, tenthisinh) VALUES(805, 505, 606, 402, 104, 'Dat', 90.1, '2025-05-20', true, '2000-12-25', 'Hoang Minh E');
+(805, 505, 606, 402, 104, 'Dat', 90.1, '2025-05-20', true, '2000-12-25', 'Hoang Minh E');
 
 --UPDATE phieuduthi
 --SET ngaysinhts = '2000-03-15', tenthisinh = 'Nguyen Van A'
