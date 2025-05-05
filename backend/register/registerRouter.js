@@ -50,6 +50,9 @@ router.post('/add-register', async (req, res) => {
         selectedSchedules,
         examinees,
     } = req.body;
+
+    let eName = '';
+    let eDob = '';
   
     try {
       let khachhang = await KhachHang.findOne({
@@ -77,6 +80,14 @@ router.post('/add-register', async (req, res) => {
       });
   
       for (const examinee of examinees) {
+        if(registerType === 'unit') {
+          eName = examinee['Tên thí sinh'];
+          eDob = examinee['Ngày sinh'];
+        }
+        else{
+          eName = examinee.examineeName;
+          eDob = examinee.examineeDob;
+        }
         await PhieuDuThi.create({
           idphieudangky: phieudangky.idphieudangky,
           idlichthi: selectedSchedules[0].idlichthi,
@@ -86,8 +97,8 @@ router.post('/add-register', async (req, res) => {
           diemsothi: null,
           thoigiannhanchungchi: null,
           xacnhannhanchungchi: false,
-          tenthisinh: examinee.examineeName,
-          ngaysinhts: examinee.examineeDob,
+          tenthisinh: eName,
+          ngaysinhts: eDob,
         });
       }
   
